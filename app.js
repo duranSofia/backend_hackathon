@@ -4,8 +4,11 @@ const client = require("./config/db");
 const mainRouter = require("./routes");
 const errorMiddleware = require("./middleware/error-handling.middleware");
 const error = require("http-errors");
-const cors = require("cors");
+// const cors = require("cors");
 const PORT = process.env.PORT || 8000;
+
+//TO ADD
+// Cookie parser
 
 app.use(express.json());
 app.use(mainRouter);
