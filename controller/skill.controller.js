@@ -22,7 +22,7 @@ exports.getOneSkill = async (req, res, next) => {
     // const uniqueSkill = await client.skill.findUnique({
     //   where: { id: skillId },
     // });
-    res.status(200).json(fakeSkills.find((skill) => skill.id === skillId));
+    res.status(200).json(fakeSkills.find((skill) => skill.id === skillId)); // this is just for testing
   } catch (err) {
     next(err);
   }
@@ -62,7 +62,6 @@ exports.updateSkill = async (req, res, next) => {
   }
 };
 
-// skill as a user, I want to delete a song.
 exports.deleteSkill = async (req, res, next) => {
   try {
     const skillId = Number(req.params.skillId);
