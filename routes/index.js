@@ -1,12 +1,11 @@
 const router = require("express").Router();
-const todolistRoutes = require("./todolist.routes");
-const authRoutes = require("./auth.routes");
+const skillRoutes = require("./skill.routes");
 
 router.get("/", (req, res, next) => {
-  res.json({ ok: "yes" });
-}); //TODO Ask Leo
+  res.json({ ok: "index :)" });
+});
 
-router.use("/todolist", todolistRoutes);
-router.use("/auth", authRoutes);
+router.use("/api/skills", skillRoutes); // manage skills
+// router.use("/hobbie", skillRoutes); // manage hobbies
 
 module.exports = router;
