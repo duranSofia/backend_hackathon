@@ -321,3 +321,74 @@ exports.removeExperience = async (req, res, next) => {
     next(err);
   }
 };
+
+// add WISH to employee
+
+const findWish = async (id) => {
+  const wish = await client.wish.findUnique({ where: { id } });
+  return wish;
+};
+
+exports.createWish = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { name, type } = req.body;
+    const employee = await findEmployee(employeeId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const createdWish = await client.wish.create({
+      data: {
+        name: name,
+        type: type,
+        employee: { connect: { id: employeeId } },
+      },
+    });
+    res.status(200).json(createdWish);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateWish = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const employee = await findEmployee(employeeId);
+
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const { wishId, name, type } = req.body;
+    const updatedUser = await client.employee.update({
+      where: { id: employeeId },
+      data: { wish: { name, type, connect: { id: wishId } } },
+      include: { wish: true },
+    });
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.removeWish = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const wishId = Number(req.params.wishId);
+    const employee = await findEmployee(employeeId);
+    const wish = await findWish(wishId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    if (!wish) {
+      throw createError(404, "Wish not Found");
+    }
+    const removedWish = await client.employee.update({
+      where: { id: employeeId },
+      data: { wish: { disconnect: { id: wishId } } },
+      include: { wish: true },
+    });
+    res.status(200).json(removedWish);
+  } catch (err) {
+    next(err);
+  }
+};
