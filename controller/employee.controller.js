@@ -4,7 +4,15 @@ const createError = require("http-errors");
 
 exports.getAllEmployees = async (req, res, next) => {
   try {
-    const employees = await client.employee.findMany();
+    const employees = await client.employee.findMany({
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        hobby: true,
+      },
+    });
     res.status(200).json(employees);
   } catch (err) {
     next(err);
@@ -16,6 +24,13 @@ exports.getOneEmployee = async (req, res, next) => {
     const employeeId = Number(req.params.employeeId);
     const employee = await client.employee.findUnique({
       where: { id: employeeId },
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        hobby: true,
+      },
     });
     if (!employee) {
       throw createError(404, "employee not found");
@@ -29,7 +44,7 @@ exports.getOneEmployee = async (req, res, next) => {
 exports.createEmployee = async (req, res, next) => {
   try {
     const { name, last_name, email, phone, start_date } = req.body;
-    // const convertedDate = new Date(start_date).toISOString(); //TODO change it in the FE
+    // const convertedDate = new Date(start_date).toISOString(); //TODO change it in the FrontEnd
     const newEmployee = await client.employee.create({
       data: {
         name: name,
@@ -56,7 +71,14 @@ exports.updateEmployee = async (req, res, next) => {
         last_name: last_name,
         email: email,
         phone: phone,
-        start_date: new Date(start_date).toISOString(),
+        start_date: start_date,
+      },
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        hobby: true,
       },
     });
     res.status(200).json(updatedEmployee);
