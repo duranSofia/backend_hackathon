@@ -2,7 +2,7 @@ const client = require("../config/db");
 
 exports.getAllWishes = async (req, res, next) => {
   try {
-    const wishes = await client.wish.findMany();
+    const wishes = await client.wish.findMany({ include: { employee: true } });
     res.status(200).json(wishes);
   } catch (err) {
     next(err);
@@ -14,6 +14,7 @@ exports.getWish = async (req, res, next) => {
     const wishId = Number(req.params.wishId);
     const wish = await client.wish.findUnique({
       where: { id: wishId },
+      include: { employee: true },
     });
     res.status(200).json(wish);
   } catch (err) {
@@ -40,6 +41,7 @@ exports.updateWish = async (req, res, next) => {
     const updatedWish = await client.wish.update({
       where: { id: wishId },
       data: { name: name, type: type },
+      include: { employee: true },
     });
     res.status(200).json(updatedWish);
   } catch (err) {
