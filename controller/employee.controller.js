@@ -1,25 +1,25 @@
-const { PrismaClient } = require("@prisma/client");
-const client = new PrismaClient();
-const createError = require("http-errors");
+// const { PrismaClient } = require("@prisma/client");
+// const client = new PrismaClient();
+// const createError = require("http-errors");
 
-const fakeEmployee = {
-  id: 1,
-  name: "Susan",
-  last_name: "Jackson",
-  email: "mail@mailtest.com",
-  phone: "213193579138",
-  start_date: 2020 - 10 - 02,
-  network: "networktest",
-};
+// const fakeEmployee = {
+//   id: 1,
+//   name: "Susan",
+//   last_name: "Jackson",
+//   email: "mail@mailtest.com",
+//   phone: "213193579138",
+//   start_date: 2020 - 10 - 02,
+//   network: "networktest",
+// };
 
-exports.getAllEmployees = async (req, res, next) => {
-  try {
-    // const employees = await client.employee.findMany();
-    res.status(200).json(fakeEmployee);
-  } catch (err) {
-    next(err);
-  }
-};
+// exports.getAllEmployees = async (req, res, next) => {
+//   try {
+//     const employees = await client.employee.findMany();
+//     res.status(200).json(fakeEmployee);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 // exports.getEmployee = async (req, res, next) => {
 //   try {

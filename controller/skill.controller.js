@@ -15,6 +15,7 @@ exports.getOneSkill = async (req, res, next) => {
     const uniqueSkill = await client.skill.findUnique({
       where: { id: skillId },
     });
+    res.status(200).json(uniqueSkill);
   } catch (err) {
     next(err);
   }
@@ -27,7 +28,6 @@ exports.createSkill = async (req, res, next) => {
       data: {
         name: name,
         type: type,
-        employee: { connect: { id: employeeId } },
       },
     });
     res.status(200).json(newSkill);

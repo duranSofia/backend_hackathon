@@ -15,6 +15,7 @@ exports.getOneExperience = async (req, res, next) => {
     const uniqueExperience = await client.experience.findUnique({
       where: { id: experienceId },
     });
+    res.status(200).json(uniqueExperience);
   } catch (err) {
     next(err);
   }
@@ -27,7 +28,6 @@ exports.createExperience = async (req, res, next) => {
       data: {
         name: name,
         type: type,
-        employee: { connect: { id: employeeId } },
       },
     });
     res.status(200).json(newExperience);

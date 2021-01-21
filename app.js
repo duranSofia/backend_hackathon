@@ -5,11 +5,9 @@ const mainRouter = require("./routes");
 const errorMiddleware = require("./middleware/error-handling.middleware");
 const error = require("http-errors");
 const cors = require("cors");
-const morgan = require("morgan");
 
 const PORT = process.env.PORT || 8000;
 
-app.use(morgan());
 app.use(express.json());
 app.use(mainRouter);
 
