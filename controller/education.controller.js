@@ -2,8 +2,8 @@ const client = require("../config/db");
 
 exports.getAllEducation = async (req, res, next) => {
   try {
-    const education = await client.education.findMany();
-    res.status(200).json(education);
+    const educations = await client.education.findMany();
+    res.status(200).json(educations);
   } catch (err) {
     next(err);
   }
