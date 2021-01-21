@@ -2,7 +2,9 @@ const client = require("../config/db");
 
 exports.getAllHobbies = async (req, res, next) => {
   try {
-    const allHobbys = await client.hobby.findMany();
+    const allHobbys = await client.hobby.findMany({
+      include: { employee: true },
+    });
     res.status(200).json(allHobbys);
   } catch (err) {
     next(err);
@@ -14,6 +16,7 @@ exports.getOneHobby = async (req, res, next) => {
     const hobbyId = Number(req.params.hobbyId);
     const uniqueHobby = await client.hobby.findUnique({
       where: { id: hobbyId },
+      include: { employee: true },
     });
     res.status(200).json(uniqueHobby);
   } catch (err) {
@@ -46,6 +49,7 @@ exports.updateHobby = async (req, res, next) => {
         name: name,
         type: type,
       },
+      include: { employee: true },
     });
     res.status(200).json(updatedHobby);
   } catch (err) {

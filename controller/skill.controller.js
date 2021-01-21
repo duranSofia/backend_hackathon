@@ -2,7 +2,9 @@ const client = require("../config/db");
 
 exports.getAllSkills = async (req, res, next) => {
   try {
-    const allSkills = await client.skill.findMany();
+    const allSkills = await client.skill.findMany({
+      include: { employee: true },
+    });
     res.status(200).json(allSkills);
   } catch (err) {
     next(err);
@@ -14,6 +16,7 @@ exports.getOneSkill = async (req, res, next) => {
     const skillId = Number(req.params.skillId);
     const uniqueSkill = await client.skill.findUnique({
       where: { id: skillId },
+      include: { employee: true },
     });
     res.status(200).json(uniqueSkill);
   } catch (err) {
@@ -46,6 +49,7 @@ exports.updateSkill = async (req, res, next) => {
         name: name,
         type: type,
       },
+      include: { employee: true },
     });
     res.status(200).json(updatedSkill);
   } catch (err) {
