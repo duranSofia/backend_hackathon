@@ -1,5 +1,5 @@
 const {
-  getAllExperience,
+  getAllExperiences,
   getOneExperience,
   createExperience,
   updateExperience,
