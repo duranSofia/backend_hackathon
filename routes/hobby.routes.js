@@ -1,17 +1,19 @@
-// const {
-//   getAllHobbies,
-//   getOneHobby,
-//   createHobby,
-//   updateHobby,
-//   deleteHobby,
-// } = require("../controller/hobby.controller");
+const {
+  getAllHobbies,
+  getOneHobby,
+  createHobby,
+  updateHobby,
+  deleteHobby,
+} = require("../controller/hobby.controller");
 
-// const router = require("express").Router();
+const router = require("express").Router();
 
-// router.get("/", getAllHobbys);
-// router.post("/", createHobby);
-// router.get("/:hobbyId", getOneHobby);
-// router.put("/:hobbyId", updateHobby);
-// router.delete("/:hobbyId", deleteHobby);
+// "/api/hobby/ ....
 
-// module.exports = router;
+router.get("/", getAllHobbies);
+router.post("/", createHobby);
+router.get("/:hobbyId", getOneHobby);
+router.put("/:hobbyId", updateHobby);
+router.delete("/:hobbyId", deleteHobby);
+
+module.exports = router;
