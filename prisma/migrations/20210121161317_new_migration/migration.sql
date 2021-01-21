@@ -6,7 +6,6 @@ CREATE TABLE `Employee` (
     `email` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NOT NULL,
     `start_date` DATETIME(3) NOT NULL,
-    `network` VARCHAR(191) NOT NULL,
     `officeId` INT,
     `positionId` INT,
 

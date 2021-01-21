@@ -17,7 +17,6 @@ model Employee {
   email      String
   phone      String
   start_date DateTime
-  network    String
   experience Experience[]
   skill      Skill[]
   wish       Wish[]

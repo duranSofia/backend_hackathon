@@ -2,7 +2,9 @@ const client = require("../config/db");
 
 exports.getAllOffices = async (req, res, next) => {
   try {
-    const allOffices = await client.office.findMany();
+    const allOffices = await client.office.findMany({
+      include: { employee: true },
+    });
     res.status(200).json(allOffices);
   } catch (err) {
     next(err);
@@ -14,6 +16,7 @@ exports.getOneOffice = async (req, res, next) => {
     const officeId = Number(req.params.officeId);
     const uniqueOffice = await client.office.findUnique({
       where: { id: officeId },
+      include: { employee: true },
     });
     res.status(200).json(uniqueOffice);
   } catch (err) {
@@ -44,6 +47,7 @@ exports.updateOffice = async (req, res, next) => {
       data: {
         location: location,
       },
+      include: { employee: true },
     });
     res.status(200).json(updatedOffice);
   } catch (err) {
