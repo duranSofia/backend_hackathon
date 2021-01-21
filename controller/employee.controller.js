@@ -144,6 +144,10 @@ exports.updateSkill = async (req, res, next) => {
       throw createError(404, "Employee not Found");
     }
     const skillId = req.body.skillId;
+    const skill = await findSkill(skillId);
+    if (!skill) {
+      throw createError(404, "Skill not Found");
+    }
     const updatedUser = await client.employee.update({
       where: { id: employeeId },
       data: { skill: { connect: { id: skillId } } },
@@ -243,6 +247,76 @@ exports.removeHobby = async (req, res, next) => {
       include: { hobby: true },
     });
     res.status(200).json(removedHobby);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// add EXPERIENCE to employee
+const findExperience = async (id) => {
+  const experience = await client.experience.findUnique({ where: { id } });
+  return experience;
+};
+
+exports.createExperience = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { name, type } = req.body;
+    const employee = await findEmployee(employeeId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const createdExperience = await client.experience.create({
+      data: {
+        name: name,
+        type: type,
+        employee: { connect: { id: employeeId } },
+      },
+    });
+    res.status(200).json(createdExperience);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateExperience = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const employee = await findEmployee(employeeId);
+
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const experienceId = req.body.experienceId;
+    const updatedUser = await client.employee.update({
+      where: { id: employeeId },
+      data: { experience: { connect: { id: experienceId } } },
+      include: { experience: true },
+    });
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.removeExperience = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const experienceId = Number(req.params.experienceId);
+    const employee = await findEmployee(employeeId);
+    const experience = await findExperience(experienceId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    if (!experience) {
+      throw createError(404, "Experience not Found");
+    }
+    const removedExperience = await client.employee.update({
+      where: { id: employeeId },
+      data: { experience: { disconnect: { id: experienceId } } },
+      include: { experience: true },
+    });
+    res.status(200).json(removedExperience);
   } catch (err) {
     next(err);
   }
