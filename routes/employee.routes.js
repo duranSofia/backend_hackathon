@@ -1,5 +1,3 @@
-// all "todo values" to be updated with real values
-
 const {
   getAllEmployees,
   createEmployee,
