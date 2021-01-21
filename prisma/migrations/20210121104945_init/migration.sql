@@ -16,6 +16,7 @@ CREATE TABLE `Employee` (
 -- CreateTable
 CREATE TABLE `Experience` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
     `type` INT NOT NULL,
 
     PRIMARY KEY (`id`)
