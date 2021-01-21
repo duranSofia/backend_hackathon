@@ -2,7 +2,9 @@ const client = require("../config/db");
 
 exports.getAllEducation = async (req, res, next) => {
   try {
-    const educations = await client.education.findMany();
+    const educations = await client.education.findMany({
+      include: { employee: true },
+    });
     res.status(200).json(educations);
   } catch (err) {
     next(err);
@@ -14,6 +16,7 @@ exports.getEducation = async (req, res, next) => {
     const educationId = Number(req.params.educationId);
     const education = await client.education.findUnique({
       where: { id: educationId },
+      include: { employee: true },
     });
     res.status(200).json(education);
   } catch (err) {
@@ -40,6 +43,7 @@ exports.updateEducation = async (req, res, next) => {
     const updatedEducation = await client.education.update({
       where: { id: educationId },
       data: { name: name, type: type },
+      include: { employee: true },
     });
     res.status(200).json(updatedEducation);
   } catch (err) {
