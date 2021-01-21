@@ -7,11 +7,14 @@ const error = require("http-errors");
 const cors = require("cors");
 const PORT = process.env.PORT || 8000;
 
+//TO ADD
+// Cookie parser
+
 app.use(express.json());
 app.use(mainRouter);
 
 app.use("*", (req, res, next) => {
-  next(error(404, "Not found"));
+  next(error(404, "Page not found"));
 });
 
 app.use(errorMiddleware);
