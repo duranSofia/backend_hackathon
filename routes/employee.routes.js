@@ -7,12 +7,12 @@ const {
   createNewEmployeeSkill,
   addEmployeeSkillById,
   removeSkillById,
-  createHobby,
-  updateHobby,
-  removeHobby,
-  createExperience,
-  updateExperience,
-  removeExperience,
+  createNewEmployeeHobby,
+  addEmployeeHobbyById,
+  removeHobbyById,
+  createNewEmployeeExperience,
+  addEmployeeExperienceById,
+  removeExperienceById,
 } = require("../controller/employee.controller");
 
 const router = require("express").Router();
@@ -29,13 +29,20 @@ router.put("/:employeeId/skill", addEmployeeSkillById);
 router.delete("/:employeeId/skill/:skillId", removeSkillById);
 
 // employee HOBBY router
-router.post("/:employeeId/hobby", createHobby);
-router.put("/:employeeId/hobby", updateHobby);
-router.delete("/:employeeId/hobby/:hobbyId", removeHobby);
+router.post("/:employeeId/hobby/create", createNewEmployeeHobby);
+router.put("/:employeeId/hobby", addEmployeeHobbyById);
+router.delete("/:employeeId/hobby/:hobbyId", removeHobbyById);
 
 // employee EXPERIENCE router
-router.post("/:employeeId/experience", createExperience);
-router.put("/:employeeId/experience", updateExperience);
-router.delete("/:employeeId/experience/:experienceId", removeExperience);
+router.post("/:employeeId/experience/create", createNewEmployeeExperience);
+router.put("/:employeeId/experience", addEmployeeExperienceById);
+router.delete("/:employeeId/experience/:experienceId", removeExperienceById);
+
+// employee EDUCATION router
+router.post("/:employeeId/education/create", createNewEmployeeEducation);
+router.put("/:employeeId/education", addEmployeeEducationById);
+router.delete("/:employeeId/education/:educationId", removeEducationById);
+
+// employee WISHES router
 
 module.exports = router;
