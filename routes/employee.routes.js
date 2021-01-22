@@ -13,6 +13,12 @@ const {
   createExperience,
   updateExperience,
   removeExperience,
+  createWish,
+  updateWish,
+  removeWish,
+  createDepartment,
+  updateDepartment,
+  removeDepartment,
 } = require("../controller/employee.controller");
 
 const router = require("express").Router();
@@ -37,5 +43,15 @@ router.delete("/:employeeId/hobby/:hobbyId", removeHobby);
 router.post("/:employeeId/experience", createExperience);
 router.put("/:employeeId/experience", updateExperience);
 router.delete("/:employeeId/experience/:experienceId", removeExperience);
+
+// employee WISH router
+router.post("/:employeeId/wish", createWish);
+router.put("/:employeeId/wish", updateWish);
+router.delete("/:employeeId/wish/:wishId", removeWish);
+
+// employee DEPARTMENT router
+router.post("/:employeeId/department", createDepartment);
+router.put("/:employeeId/department", updateDepartment);
+router.delete("/:employeeId/department/:departmentId", removeDepartment);
 
 module.exports = router;

@@ -358,17 +358,17 @@ exports.updateWish = async (req, res, next) => {
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
-    const { wishId, name, type } = req.body;
-    const updatedWish = await client.wish.update({
-      where: { id: wishId },
-      data: { name, type },
-    });
-    const updatedEmployee = await client.employee.update({
+    const wishId = req.body.wishId;
+    const wish = await findWish(wishId);
+    if (!wish) {
+      throw createError(404, "Wish not Found");
+    }
+    const updatedUser = await client.employee.update({
       where: { id: employeeId },
       data: { wish: { connect: { id: wishId } } },
       include: { wish: true },
     });
-    res.status(200).json(updatedEmployee);
+    res.status(200).json(updatedUser);
   } catch (err) {
     next(err);
   }
@@ -392,6 +392,81 @@ exports.removeWish = async (req, res, next) => {
       include: { wish: true },
     });
     res.status(200).json(removedWish);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// add DEPARTMENT to employee
+
+const findDepartment = async (id) => {
+  const department = await client.department.findUnique({ where: { id } });
+  return department;
+};
+
+exports.createDepartment = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { name, type } = req.body;
+    const employee = await findEmployee(employeeId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const createdDepartment = await client.department.create({
+      data: {
+        name: name,
+        type: type,
+        employee: { connect: { id: employeeId } },
+      },
+    });
+    res.status(200).json(createdDepartment);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateDepartment = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const employee = await findEmployee(employeeId);
+
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const departmentId = req.body.departmentId;
+    const department = await findDepartment(departmentId);
+    if (!department) {
+      throw createError(404, "Department not Found");
+    }
+    const updatedUser = await client.employee.update({
+      where: { id: employeeId },
+      data: { department: { connect: { id: departmentId } } },
+      include: { department: true },
+    });
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.removeDepartment = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const departmentId = Number(req.params.departmentId);
+    const employee = await findEmployee(employeeId);
+    const department = await findDepartment(departmentId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    if (!department) {
+      throw createError(404, "Department not Found");
+    }
+    const removedDepartment = await client.employee.update({
+      where: { id: employeeId },
+      data: { department: { disconnect: { id: departmentId } } },
+      include: { department: true },
+    });
+    res.status(200).json(removedDepartment);
   } catch (err) {
     next(err);
   }
