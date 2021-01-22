@@ -102,7 +102,10 @@ exports.deleteEmployee = async (req, res, next) => {
 // add SKILL to employee
 
 const findEmployee = async (id) => {
-  const employee = await client.employee.findUnique({ where: { id } });
+  const employee = await client.employee.findUnique({
+    where: { id },
+    include: { Office: true },
+  });
   return employee;
 };
 const findSkill = async (id) => {
@@ -408,6 +411,148 @@ exports.removeEducationById = async (req, res, next) => {
       include: { education: true },
     });
     res.status(200).json(removedEducation);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//ADD POSITION TO EMPLOYEE
+
+const findPosition = async (id) => {
+  const position = await client.position.findUnique({ where: { id } });
+  return position;
+};
+
+exports.createNewEmployeePosition = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { name } = req.body;
+    const employee = await findEmployee(employeeId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const createdPosition = await client.position.create({
+      data: {
+        name: name,
+        employee: { connect: { id: employeeId } },
+      },
+    });
+    res.status(200).json(createdPosition);
+  } catch (err) {
+    next(err);
+  }
+};
+// POST connect an existing position to an employee
+
+exports.addEmployeePositionById = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const employee = await findEmployee(employeeId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const positionId = req.body.positionId;
+    const position = await findPosition(positionId);
+    if (!position) {
+      throw createError(404, "Position not Found");
+    }
+    const updatedEmployee = await client.employee.update({
+      where: { id: employeeId },
+      data: { Position: { connect: { id: positionId } } },
+      include: { Position: true },
+    });
+    res.status(200).json(updatedEmployee);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.removePositionById = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const positionId = Number(req.params.positionId);
+    const employee = await findEmployee(employeeId);
+    const position = await findPosition(positionId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    if (!position) {
+      throw createError(404, "Position not Found");
+    }
+    if (employee.positionId !== positionId) {
+      throw createError(404, `No position ${positionId} on this employee`);
+    }
+    const removedPosition = await client.employee.update({
+      where: { id: employeeId },
+      data: { Position: { disconnect: true } },
+    });
+    res.status(200).json(removedPosition);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//ADD OFFICE TO EMPLOYEE
+
+const findOffice = async (id) => {
+  const office = await client.office.findUnique({ where: { id } });
+  return office;
+};
+
+//POST connect an existing office to an employee
+
+exports.addEmployeeOfficeById = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const employee = await findEmployee(employeeId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const officeId = req.body.officeId;
+    const office = await findOffice(officeId);
+    if (!office) {
+      throw createError(404, "Office not Found");
+    }
+    const updatedEmployee = await client.employee.update({
+      where: { id: employeeId },
+      data: { Office: { connect: { id: officeId } } },
+      include: { Office: true },
+    });
+    res.status(200).json(updatedEmployee);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.removeOfficeById = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const officeId = Number(req.params.officeId);
+    console.log(officeId);
+    const employee = await findEmployee(employeeId);
+    const office = await findOffice(officeId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    if (!office) {
+      throw createError(404, "Office not Found");
+    }
+    if (employee.officeId !== officeId) {
+      throw createError(404, `No office ${officeId} on this employee`);
+    }
+    // const user = await prisma.user.update({
+    //   where: { email: 'alice@prisma.io' },
+    //   data: {
+    //     posts: {
+    //       disconnect: [{ id: 44 }, { id: 46 }],
+    //     },
+    //   },
+    // })
+    const removedOffice = await client.employee.update({
+      where: { id: employeeId },
+      data: { Office: { disconnect: true } },
+    });
+    res.status(200).json(removedOffice);
   } catch (err) {
     next(err);
   }

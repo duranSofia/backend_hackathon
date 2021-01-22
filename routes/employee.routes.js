@@ -13,6 +13,14 @@ const {
   createNewEmployeeExperience,
   addEmployeeExperienceById,
   removeExperienceById,
+  createNewEmployeeEducation,
+  addEmployeeEducationById,
+  removeEducationById,
+  createNewEmployeePosition,
+  addEmployeePositionById,
+  removePositionById,
+  addEmployeeOfficeById,
+  removeOfficeById,
 } = require("../controller/employee.controller");
 
 const router = require("express").Router();
@@ -42,6 +50,15 @@ router.delete("/:employeeId/experience/:experienceId", removeExperienceById);
 router.post("/:employeeId/education/create", createNewEmployeeEducation);
 router.put("/:employeeId/education", addEmployeeEducationById);
 router.delete("/:employeeId/education/:educationId", removeEducationById);
+
+// employee POSITION router
+router.post("/:employeeId/position/create", createNewEmployeePosition);
+router.put("/:employeeId/position", addEmployeePositionById);
+router.delete("/:employeeId/position/:positionId", removePositionById);
+
+// employee OFFICE router
+router.post("/:employeeId/office/", addEmployeeOfficeById);
+router.delete("/:employeeId/office/:officeId", removeOfficeById);
 
 // employee WISHES router
 
