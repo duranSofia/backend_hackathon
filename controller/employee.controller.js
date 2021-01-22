@@ -110,7 +110,10 @@ const findSkill = async (id) => {
   return skill;
 };
 
-exports.createSkill = async (req, res, next) => {
+//POST create a skill and connect it to an employee
+// create a function to check if the skill already exists
+
+exports.createNewEmployeeSkill = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     const { name, type } = req.body;
@@ -131,15 +134,16 @@ exports.createSkill = async (req, res, next) => {
   }
 };
 
+//POST connect an existing skill to an employee
+
 //{ pass this in postman
 //   "skillId": 11
 // }
 
-exports.updateSkill = async (req, res, next) => {
+exports.addEmployeeSkillById = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     const employee = await findEmployee(employeeId);
-
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
@@ -148,18 +152,18 @@ exports.updateSkill = async (req, res, next) => {
     if (!skill) {
       throw createError(404, "Skill not Found");
     }
-    const updatedUser = await client.employee.update({
+    const updatedEmployee = await client.employee.update({
       where: { id: employeeId },
       data: { skill: { connect: { id: skillId } } },
       include: { skill: true },
     });
-    res.status(200).json(updatedUser);
+    res.status(200).json(updatedEmployee);
   } catch (err) {
     next(err);
   }
 };
 
-exports.removeSkill = async (req, res, next) => {
+exports.removeSkillById = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     const skillId = Number(req.params.skillId);

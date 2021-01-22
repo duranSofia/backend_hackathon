@@ -4,9 +4,9 @@ const {
   updateEmployee,
   deleteEmployee,
   getOneEmployee,
-  createSkill,
-  updateSkill,
-  removeSkill,
+  createNewEmployeeSkill,
+  addEmployeeSkillById,
+  removeSkillById,
   createHobby,
   updateHobby,
   removeHobby,
@@ -24,9 +24,9 @@ router.put("/:employeeId", updateEmployee);
 router.delete("/:employeeId", deleteEmployee);
 
 // employee SKILLS router
-router.post("/:employeeId/skill/create", createSkill);
-router.put("/:employeeId/skill", updateSkill);
-router.delete("/:employeeId/skill/:skillId", removeSkill);
+router.post("/:employeeId/skill/create", createNewEmployeeSkill);
+router.put("/:employeeId/skill", addEmployeeSkillById);
+router.delete("/:employeeId/skill/:skillId", removeSkillById);
 
 // employee HOBBY router
 router.post("/:employeeId/hobby", createHobby);
