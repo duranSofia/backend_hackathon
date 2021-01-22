@@ -21,6 +21,9 @@ const {
   removePositionById,
   addEmployeeOfficeById,
   removeOfficeById,
+  createWish,
+  updateWish,
+  removeWish,
 } = require("../controller/employee.controller");
 
 const router = require("express").Router();
@@ -61,5 +64,8 @@ router.post("/:employeeId/office/", addEmployeeOfficeById);
 router.delete("/:employeeId/office/:officeId", removeOfficeById);
 
 // employee WISHES router
+router.post("/:employeeId/wish", createWish);
+router.put("/:employeeId/wish", updateWish);
+router.delete("/:employeeId/wish/:wishId", removeWish);
 
 module.exports = router;
