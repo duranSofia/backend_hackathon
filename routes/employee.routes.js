@@ -54,6 +54,11 @@ router.post("/:employeeId/education/create", createNewEmployeeEducation);
 router.put("/:employeeId/education", addEmployeeEducationById);
 router.delete("/:employeeId/education/:educationId", removeEducationById);
 
+// employee WISHES router
+router.post("/:employeeId/wish/create", createWish);
+router.put("/:employeeId/wish", updateWish);
+router.delete("/:employeeId/wish/:wishId", removeWish);
+
 // employee POSITION router
 router.post("/:employeeId/position/create", createNewEmployeePosition);
 router.put("/:employeeId/position", addEmployeePositionById);
@@ -62,10 +67,5 @@ router.delete("/:employeeId/position/:positionId", removePositionById);
 // employee OFFICE router
 router.post("/:employeeId/office/", addEmployeeOfficeById);
 router.delete("/:employeeId/office/:officeId", removeOfficeById);
-
-// employee WISHES router
-router.post("/:employeeId/wish", createWish);
-router.put("/:employeeId/wish", updateWish);
-router.delete("/:employeeId/wish/:wishId", removeWish);
 
 module.exports = router;
