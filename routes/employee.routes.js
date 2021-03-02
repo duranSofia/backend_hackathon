@@ -7,23 +7,21 @@ const {
   createNewEmployeeSkill,
   addEmployeeSkillById,
   removeSkillById,
-  createNewEmployeeHobby,
-  addEmployeeHobbyById,
-  removeHobbyById,
+  createNewEmployeeOther,
+  addEmployeeOtherById,
+  removeOtherById,
   createNewEmployeeExperience,
   addEmployeeExperienceById,
   removeExperienceById,
   createNewEmployeeEducation,
   addEmployeeEducationById,
   removeEducationById,
-  createNewEmployeePosition,
-  addEmployeePositionById,
-  removePositionById,
-  addEmployeeOfficeById,
-  removeOfficeById,
-  createWish,
-  updateWish,
-  removeWish,
+  createNewEmployeeCompanyInfo,
+  addEmployeeCompanyInfoById,
+  removeCompanyInfoById,
+  createNewEmployeeWish,
+  addEmployeeWishById,
+  removeWishById,
 } = require("../controller/employee.controller");
 
 const router = require("express").Router();
@@ -39,10 +37,10 @@ router.post("/:employeeId/skill/create", createNewEmployeeSkill);
 router.put("/:employeeId/skill", addEmployeeSkillById);
 router.delete("/:employeeId/skill/:skillId", removeSkillById);
 
-// employee HOBBY router
-router.post("/:employeeId/hobby/create", createNewEmployeeHobby);
-router.put("/:employeeId/hobby", addEmployeeHobbyById);
-router.delete("/:employeeId/hobby/:hobbyId", removeHobbyById);
+// employee OTHER router
+router.post("/:employeeId/other/create", createNewEmployeeOther);
+router.put("/:employeeId/other", addEmployeeOtherById);
+router.delete("/:employeeId/other/:otherId", removeOtherById);
 
 // employee EXPERIENCE router
 router.post("/:employeeId/experience/create", createNewEmployeeExperience);
@@ -55,17 +53,13 @@ router.put("/:employeeId/education", addEmployeeEducationById);
 router.delete("/:employeeId/education/:educationId", removeEducationById);
 
 // employee WISHES router
-router.post("/:employeeId/wish/create", createWish);
-router.put("/:employeeId/wish", updateWish);
-router.delete("/:employeeId/wish/:wishId", removeWish);
+router.post("/:employeeId/wish/create", createNewEmployeeWish);
+router.put("/:employeeId/wish", addEmployeeWishById);
+router.delete("/:employeeId/wish/:wishId", removeWishById);
 
-// employee POSITION router
-router.post("/:employeeId/position/create", createNewEmployeePosition);
-router.put("/:employeeId/position", addEmployeePositionById);
-router.delete("/:employeeId/position/:positionId", removePositionById);
-
-// employee OFFICE router
-router.post("/:employeeId/office/", addEmployeeOfficeById);
-router.delete("/:employeeId/office/:officeId", removeOfficeById);
+// employee COMPANY INFORMATION router
+router.post("/:employeeId/companyinfo/create", createNewEmployeeCompanyInfo);
+router.put("/:employeeId/companyinfo", addEmployeeCompanyInfoById);
+router.delete("/:employeeId/companyinfo/:companyInfoId", removeCompanyInfoById);
 
 module.exports = router;

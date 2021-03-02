@@ -11,74 +11,64 @@ generator client {
 }
 
 model Employee {
-  id         Int          @id @default(autoincrement())
-  name       String
-  last_name  String
-  email      String
-  phone      String
-  start_date DateTime
-  experience Experience[]
-  skill      Skill[]
-  wish       Wish[]
-  education  Education[]
-  hobby      Hobby[]
-  Office     Office?      @relation(fields: [officeId], references: [id])
-  officeId   Int?
-  Position   Position?    @relation(fields: [positionId], references: [id])
-  positionId Int?
+  id           Int            @id @default(autoincrement())
+  name         String
+  last_name    String
+  email        String
+  phone        String
+  address      String
+  picture      String
+  experience   Experience[]
+  skill        Skill[]
+  wish         Wish[]
+  education    Education[]
+  other        Other[]
+  company_info Company_info[]
+
 }
 
 model Experience {
   id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
+  clients  String
+  industry String
+  network  String
   employee Employee[]
 }
 
 model Skill {
-  id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
-  employee Employee[]
+  id           Int        @id @default(autoincrement())
+  software     String
+  languages    String
+  professional String
+  softskill    String
+  employee     Employee[]
 }
 
 model Wish {
-  id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
-  employee Employee[]
+  id                Int        @id @default(autoincrement())
+  project           String
+  industry          String
+  further_education String
+  employee          Employee[]
 }
 
 model Education {
   id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
+  degree   String
   employee Employee[]
 }
 
-model Hobby {
-  id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
-  employee Employee[]
+model Other {
+  id             Int        @id @default(autoincrement())
+  hobbies        String
+  special_skills String
+  employee       Employee[]
 }
 
-model Office {
-  id       Int        @id @default(autoincrement())
-  location String
-  employee Employee[]
-}
-
-model Position {
-  id           Int         @id @default(autoincrement())
-  name         String
-  employee     Employee[]
-  Department   Department? @relation(fields: [departmentId], references: [id])
-  departmentId Int?
-}
-
-model Department {
-  id       Int        @id @default(autoincrement())
-  name     String
-  position Position[]
+model Company_info {
+  id         Int        @id @default(autoincrement())
+  location   String
+  department String
+  position   String
+  employee   Employee[]
 }
