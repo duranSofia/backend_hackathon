@@ -58,6 +58,7 @@ model Education {
   employee Employee[]
 }
 
+//
 model Other {
   id             Int        @id @default(autoincrement())
   hobbies        String
@@ -65,6 +66,7 @@ model Other {
   employee       Employee[]
 }
 
+//
 model Company_info {
   id         Int        @id @default(autoincrement())
   location   String

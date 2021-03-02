@@ -26,9 +26,9 @@ exports.getEducation = async (req, res, next) => {
 
 exports.createEducation = async (req, res, next) => {
   try {
-    const { name, type } = req.body;
+    const { degree } = req.body;
     const createdEducation = await client.education.create({
-      data: { name: name, type: type },
+      data: { degree },
     });
     res.status(200).json(createdEducation);
   } catch (err) {
@@ -39,10 +39,10 @@ exports.createEducation = async (req, res, next) => {
 exports.updateEducation = async (req, res, next) => {
   try {
     const educationId = Number(req.params.educationId);
-    const { name, type } = req.body;
+    const { degree } = req.body;
     const updatedEducation = await client.education.update({
       where: { id: educationId },
-      data: { name: name, type: type },
+      data: { degree },
       include: { employee: true },
     });
     res.status(200).json(updatedEducation);

@@ -26,11 +26,13 @@ exports.getOneSkill = async (req, res, next) => {
 
 exports.createSkill = async (req, res, next) => {
   try {
-    const { name, type } = req.body;
+    const { software, languages, professional, softskill } = req.body;
     const newSkill = await client.skill.create({
       data: {
-        name: name,
-        type: type,
+        software,
+        languages,
+        professional,
+        softskill,
       },
     });
     res.status(200).json(newSkill);
@@ -42,12 +44,14 @@ exports.createSkill = async (req, res, next) => {
 exports.updateSkill = async (req, res, next) => {
   try {
     const skillId = Number(req.params.skillId);
-    const { name, type } = req.body;
+    const { software, languages, professional, softskill } = req.body;
     const updatedSkill = await client.skill.update({
       where: { id: skillId },
       data: {
-        name: name,
-        type: type,
+        software,
+        languages,
+        professional,
+        softskill,
       },
       include: { employee: true },
     });

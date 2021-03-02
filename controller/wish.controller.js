@@ -24,9 +24,9 @@ exports.getWish = async (req, res, next) => {
 
 exports.createWish = async (req, res, next) => {
   try {
-    const { name, type } = req.body;
+    const { project, industry, further_education } = req.body;
     const createdWish = await client.wish.create({
-      data: { name: name, type: type },
+      data: { project, industry, further_education },
     });
     res.status(200).json(createdWish);
   } catch (err) {
@@ -37,10 +37,10 @@ exports.createWish = async (req, res, next) => {
 exports.updateWish = async (req, res, next) => {
   try {
     const wishId = Number(req.params.wishId);
-    const { name, type } = req.body;
+    const { project, industry, further_education } = req.body;
     const updatedWish = await client.wish.update({
       where: { id: wishId },
-      data: { name: name, type: type },
+      data: { project, industry, further_education },
       include: { employee: true },
     });
     res.status(200).json(updatedWish);
