@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -8,51 +11,71 @@ generator client {
 }
 
 model Employee {
-  id           Int            @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   name         String
   last_name    String
-  email        String
-  phone        String
-  address      String
   picture      String
-  experience   Experience[]
-  skill        Skill[]
-  wish         Wish[]
+  experience   Experience?
+  skill        Skill?        @relation(fields: [skillId], references: [id])
+  wish         Wish?
   education    Education[]
-  other        Other[]
-  company_info Company_info[]
+  intrests     Intrests?
+  company_info Company_info?
+  skillId      Int?
+  ContactInfo  ContactInfo[]
+}
 
+model ContactInfo {
+  id         Int      @id @default(autoincrement())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  email      String
+  phone      String
+  address    String
 }
 
 model Experience {
-  id       Int        @id @default(autoincrement())
-  clients  String
-  industry String
-  network  String
-  employee Employee[]
+  id         Int        @id @default(autoincrement())
+  employee   Employee   @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  industry   Industry[]
+  network    String
+  clients    Clients[]
 }
 
-model Skill {
-  id Int @id @default(autoincrement())
-
-  employee    Employee[]
-  SkillType   SkillType? @relation(fields: [skillTypeId], references: [id])
-  skillTypeId Int?
+model Clients {
+  id         Int          @id @default(autoincrement())
+  name       String
+  experience Experience[]
+  wish       Wish[]
 }
 
-model SkillType {
-  id    Int     @id @default(autoincrement())
-  type  String
-  name  String
-  skill Skill[]
+model Industry {
+  id         Int          @id @default(autoincrement())
+  name       String
+  experience Experience[]
+  wish       Wish[]
 }
 
 model Wish {
   id                Int        @id @default(autoincrement())
-  project           String
-  industry          String
+  project           Skill[]
+  industry          Industry[]
+  clients           Clients[]
   further_education String
-  employee          Employee[]
+  employee          Employee   @relation(fields: [employeeId], references: [id])
+  employeeId        Int
+}
+
+model Skill {
+  id           Int        @id @default(autoincrement())
+  software     String
+  languages    String
+  professional String
+  softskill    String
+  employee     Employee[]
+  Wish         Wish?      @relation(fields: [wishId], references: [id])
+  wishId       Int?
 }
 
 model Education {
@@ -61,18 +84,19 @@ model Education {
   employee Employee[]
 }
 
-model Other {
-  id             Int        @id @default(autoincrement())
+model Intrests {
+  id             Int      @id @default(autoincrement())
   hobbies        String
   special_skills String
-  softskill      String
-  employee       Employee[]
+  employee       Employee @relation(fields: [employeeId], references: [id])
+  employeeId     Int
 }
 
 model Company_info {
-  id         Int        @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   location   String
   department String
   position   String
-  employee   Employee[]
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
 }
