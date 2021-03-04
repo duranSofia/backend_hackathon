@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -36,12 +33,33 @@ model Experience {
 }
 
 model Skill {
-  id           Int        @id @default(autoincrement())
-  software     String
-  languages    String
-  professional String
-  softskill    String
-  employee     Employee[]
+  id             Int           @id @default(autoincrement())
+  softskill      String
+  employee       Employee[]
+  Software       Software?     @relation(fields: [softwareId], references: [id])
+  softwareId     Int?
+  Languages      Languages?    @relation(fields: [languagesId], references: [id])
+  languagesId    Int?
+  Professional   Professional? @relation(fields: [professionalId], references: [id])
+  professionalId Int?
+}
+
+model Software {
+  id    Int     @id @default(autoincrement())
+  name  String
+  skill Skill[]
+}
+
+model Languages {
+  id    Int     @id @default(autoincrement())
+  name  String
+  skill Skill[]
+}
+
+model Professional {
+  id    Int     @id @default(autoincrement())
+  name  String
+  skill Skill[]
 }
 
 model Wish {
@@ -58,7 +76,6 @@ model Education {
   employee Employee[]
 }
 
-//
 model Other {
   id             Int        @id @default(autoincrement())
   hobbies        String
@@ -66,7 +83,6 @@ model Other {
   employee       Employee[]
 }
 
-//
 model Company_info {
   id         Int        @id @default(autoincrement())
   location   String
