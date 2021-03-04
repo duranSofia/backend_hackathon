@@ -4,7 +4,7 @@ const {
   createSkill,
   updateSkill,
   deleteSkill,
-} = require("../controller/skill.controller");
+} = require("../skill/skilltypes.routes");
 
 const router = require("express").Router();
 

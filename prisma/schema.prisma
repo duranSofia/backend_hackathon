@@ -33,31 +33,16 @@ model Experience {
 }
 
 model Skill {
-  id             Int           @id @default(autoincrement())
-  softskill      String
-  employee       Employee[]
-  Software       Software?     @relation(fields: [softwareId], references: [id])
-  softwareId     Int?
-  Languages      Languages?    @relation(fields: [languagesId], references: [id])
-  languagesId    Int?
-  Professional   Professional? @relation(fields: [professionalId], references: [id])
-  professionalId Int?
+  id Int @id @default(autoincrement())
+
+  employee    Employee[]
+  SkillType   SkillType? @relation(fields: [skillTypeId], references: [id])
+  skillTypeId Int?
 }
 
-model Software {
+model SkillType {
   id    Int     @id @default(autoincrement())
-  name  String
-  skill Skill[]
-}
-
-model Languages {
-  id    Int     @id @default(autoincrement())
-  name  String
-  skill Skill[]
-}
-
-model Professional {
-  id    Int     @id @default(autoincrement())
+  type  String
   name  String
   skill Skill[]
 }
@@ -80,6 +65,7 @@ model Other {
   id             Int        @id @default(autoincrement())
   hobbies        String
   special_skills String
+  softskill      String
   employee       Employee[]
 }
 

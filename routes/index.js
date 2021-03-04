@@ -1,5 +1,6 @@
 const router = require("express").Router();
-const skillRoutes = require("./skill.routes");
+const skillRoutes = require("./skill/skill.routes");
+const skillTypeRoutes = require("./skill/skilltypes.routes");
 const educationRoutes = require("./education.routes");
 const wishRoutes = require("./wish.routes");
 const experienceRoutes = require("./experience.routes");
@@ -13,6 +14,7 @@ router.get("/", (req, res, next) => {
 
 router.use("/api/employee", employeeRoutes);
 router.use("/api/skill", skillRoutes);
+router.use("/api/skilltype", skillTypeRoutes);
 router.use("/api/experience", experienceRoutes);
 router.use("/api/education", educationRoutes);
 router.use("/api/wish", wishRoutes);

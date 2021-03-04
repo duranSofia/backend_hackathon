@@ -1,4 +1,4 @@
-const client = require("../config/db");
+const client = require("../../config/db");
 
 exports.getAllSkills = async (req, res, next) => {
   try {
@@ -16,7 +16,10 @@ exports.getOneSkill = async (req, res, next) => {
     const skillId = Number(req.params.skillId);
     const uniqueSkill = await client.skill.findUnique({
       where: { id: skillId },
-      include: { employee: true },
+      include: {
+        employee: true,
+        // SkillType: true.
+      },
     });
     res.status(200).json(uniqueSkill);
   } catch (err) {
@@ -26,12 +29,9 @@ exports.getOneSkill = async (req, res, next) => {
 
 exports.createSkill = async (req, res, next) => {
   try {
-    const { software, languages, professional, softskill } = req.body;
+    const { softskill } = req.body;
     const newSkill = await client.skill.create({
       data: {
-        software,
-        languages,
-        professional,
         softskill,
       },
     });
@@ -44,13 +44,10 @@ exports.createSkill = async (req, res, next) => {
 exports.updateSkill = async (req, res, next) => {
   try {
     const skillId = Number(req.params.skillId);
-    const { software, languages, professional, softskill } = req.body;
+    const { softskill } = req.body;
     const updatedSkill = await client.skill.update({
       where: { id: skillId },
       data: {
-        software,
-        languages,
-        professional,
         softskill,
       },
       include: { employee: true },
