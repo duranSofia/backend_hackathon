@@ -16,7 +16,7 @@ model Employee {
   last_name    String
   picture      String?
   experience   Experience?
-  skill        Skill?        @relation(fields: [skillId], references: [id])
+  skill        Skill[]
   wish         Wish?
   education    Education[]
   intrests     Intrests?
@@ -65,8 +65,7 @@ model Skill {
   employee    Employee[]
   SkillType   SkillType? @relation(fields: [skillTypeId], references: [id])
   skillTypeId Int?
-  Wish        Wish?      @relation(fields: [wishId], references: [id])
-  wishId      Int?
+  Wish        Wish[]
 }
 
 model SkillType {
