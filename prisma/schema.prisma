@@ -59,6 +59,22 @@ model Industry {
   experienceId Int?
 }
 
+model Skill {
+  id          Int        @id @default(autoincrement())
+  name        String
+  employee    Employee[]
+  SkillType   SkillType? @relation(fields: [skillTypeId], references: [id])
+  skillTypeId Int?
+  Wish        Wish?      @relation(fields: [wishId], references: [id])
+  wishId      Int?
+}
+
+model SkillType {
+  id    Int     @id @default(autoincrement())
+  type  String
+  skill Skill[]
+}
+
 model Wish {
   id                Int        @id @default(autoincrement())
   project           Skill[]
@@ -67,17 +83,6 @@ model Wish {
   further_education String?
   employee          Employee   @relation(fields: [employeeId], references: [id])
   employeeId        Int
-}
-
-model Skill {
-  id           Int        @id @default(autoincrement())
-  software     String
-  languages    String
-  professional String
-  softskill    String
-  employee     Employee[]
-  Wish         Wish?      @relation(fields: [wishId], references: [id])
-  wishId       Int?
 }
 
 model Education {

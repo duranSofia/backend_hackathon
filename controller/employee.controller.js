@@ -94,7 +94,7 @@ exports.updateEmployee = async (req, res, next) => {
         experience: true,
         skill: true,
         wish: true,
-        education: { degree },
+        education: true,
         intrests: { hobbies, special_skills },
         company_info: { location, department, position },
         ContactInfo: { email, phone, address },
@@ -210,8 +210,8 @@ exports.removeSkillById = async (req, res, next) => {
 
 // add Other to employee
 const findOther = async (id) => {
-  const other = await client.other.findUnique({ where: { id } });
-  return other;
+  const intrests = await client.intrests.findUnique({ where: { id } });
+  return intrests;
 };
 
 exports.createNewEmployeeOther = async (req, res, next) => {
@@ -222,7 +222,7 @@ exports.createNewEmployeeOther = async (req, res, next) => {
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
-    const createdOther = await client.other.create({
+    const createdOther = await client.intrests.create({
       data: {
         hobbies,
         special_skills,
@@ -244,14 +244,14 @@ exports.addEmployeeOtherById = async (req, res, next) => {
       throw createError(404, "Employee not Found");
     }
     const otherId = req.body.otherId;
-    const other = await findOther(otherId);
-    if (!other) {
+    const intrests = await findOther(otherId);
+    if (!intrests) {
       throw createError(404, "Other not Found");
     }
     const updatedEmployee = await client.employee.update({
       where: { id: employeeId },
-      data: { other: { connect: { id: otherId } } },
-      include: { other: true },
+      data: { intrests: { connect: { id: otherId } } },
+      include: { intrests: true },
     });
     res.status(200).json(updatedEmployee);
   } catch (err) {
@@ -264,17 +264,17 @@ exports.removeOtherById = async (req, res, next) => {
     const employeeId = Number(req.params.employeeId);
     const otherId = Number(req.params.otherId);
     const employee = await findEmployee(employeeId);
-    const other = await findOther(otherId);
+    const intrests = await findOther(otherId);
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
-    if (!other) {
+    if (!intrests) {
       throw createError(404, "Other not Found");
     }
     const removedOther = await client.employee.update({
       where: { id: employeeId },
-      data: { other: { disconnect: { id: otherId } } },
-      include: { other: true },
+      data: { intrests: { disconnect: { id: otherId } } },
+      include: { intrests: true },
     });
     res.status(200).json(removedOther);
   } catch (err) {
