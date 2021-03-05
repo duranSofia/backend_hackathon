@@ -5,7 +5,7 @@ exports.getAllSkillTypes = async (req, res, next) => {
     const allSkillsTypes = await client.skillType.findMany({
       include: { skill: true },
     });
-    res.status(200).json(allSkills);
+    res.status(200).json(allSkillsTypes);
   } catch (err) {
     next(err);
   }
@@ -17,7 +17,7 @@ exports.getOneSkillType = async (req, res, next) => {
     const uniqueSkillType = await client.skillType.findUnique({
       where: { id: skillTypeId },
       include: {
-        skillType: true,
+        skill: true,
       },
     });
     res.status(200).json(uniqueSkillType);
