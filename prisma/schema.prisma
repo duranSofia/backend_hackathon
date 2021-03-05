@@ -21,7 +21,6 @@ model Employee {
   education    Education[]
   intrests     Intrests?
   company_info Company_info?
-  skillId      Int?
   ContactInfo  ContactInfo[]
 }
 
@@ -51,12 +50,11 @@ model Clients {
 }
 
 model Industry {
-  id           Int          @id @default(autoincrement())
-  name         String
-  experience   Experience[]
-  wish         Wish[]
-  Experience   Experience?  @relation("network", fields: [experienceId], references: [id])
-  experienceId Int?
+  id         Int          @id @default(autoincrement())
+  name       String
+  experience Experience[]
+  wish       Wish[]
+  Experience Experience[] @relation("network")
 }
 
 model Skill {
