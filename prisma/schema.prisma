@@ -14,7 +14,7 @@ model Employee {
   id           Int           @id @default(autoincrement())
   name         String
   last_name    String
-  picture      String
+  picture      String?
   experience   Experience?
   skill        Skill?        @relation(fields: [skillId], references: [id])
   wish         Wish?
@@ -39,7 +39,7 @@ model Experience {
   employee   Employee   @relation(fields: [employeeId], references: [id])
   employeeId Int
   industry   Industry[]
-  network    String
+  network    Industry[] @relation("network")
   clients    Clients[]
 }
 
@@ -51,10 +51,12 @@ model Clients {
 }
 
 model Industry {
-  id         Int          @id @default(autoincrement())
-  name       String
-  experience Experience[]
-  wish       Wish[]
+  id           Int          @id @default(autoincrement())
+  name         String
+  experience   Experience[]
+  wish         Wish[]
+  Experience   Experience?  @relation("network", fields: [experienceId], references: [id])
+  experienceId Int?
 }
 
 model Wish {
@@ -62,7 +64,7 @@ model Wish {
   project           Skill[]
   industry          Industry[]
   clients           Clients[]
-  further_education String
+  further_education String?
   employee          Employee   @relation(fields: [employeeId], references: [id])
   employeeId        Int
 }
@@ -86,8 +88,8 @@ model Education {
 
 model Intrests {
   id             Int      @id @default(autoincrement())
-  hobbies        String
-  special_skills String
+  hobbies        String?
+  special_skills String?
   employee       Employee @relation(fields: [employeeId], references: [id])
   employeeId     Int
 }
