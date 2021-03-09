@@ -54,7 +54,7 @@ model Industry {
   name       String
   experience Experience[]
   wish       Wish[]
-  Experience Experience[] @relation("network")
+  network    Experience[] @relation("network")
 }
 
 model Skill {
@@ -63,7 +63,6 @@ model Skill {
   employee    Employee[]
   SkillType   SkillType? @relation(fields: [skillTypeId], references: [id])
   skillTypeId Int?
-  Wish        Wish[]
 }
 
 model SkillType {
@@ -74,7 +73,7 @@ model SkillType {
 
 model Wish {
   id                Int        @id @default(autoincrement())
-  project           Skill[]
+  project           String
   industry          Industry[]
   clients           Clients[]
   further_education String?

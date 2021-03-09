@@ -1,15 +1,15 @@
 const client = require("../config/db");
 
-exports.getAllOthers = async (req, res, next) => {
-  try {
-    const allOthers = await client.other.findMany({
-      include: { employee: true },
-    });
-    res.status(200).json(allOthers);
-  } catch (err) {
-    next(err);
-  }
-};
+// exports.getAllOthers = async (req, res, next) => {
+//   try {
+//     const allOthers = await client.other.findMany({
+//       include: { employee: true },
+//     });
+//     res.status(200).json(allOthers);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 exports.getOneOther = async (req, res, next) => {
   try {
