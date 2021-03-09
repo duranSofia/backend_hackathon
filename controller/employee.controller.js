@@ -53,12 +53,57 @@ exports.createEmployee = async (req, res, next) => {
         name,
         last_name,
       },
-      connect: { company_info: { location: "", department: "", position: "" } },
-      connect: { ContactInfo: { email: "", phone: "", address: "" } },
-      //connect: { education: { degree: "" } },
-      //connect: { experience: {} },
+      // select: { company_info: { location: "", department: "", position: "" } },
+      // select: { contactInfo: { email: "", phone: "", address: "" } },
+      // select: { education: { degree: "" } },
+      //select: { experience: { industry: "", network: "", clients: "" } },
+      //select: { wish: { project: "", further_education: "" } },
     });
-    res.status(200).json(newEmployee);
+    const newEmployeeContactInfo = await client.contactInfo.create({
+      data: {
+        email: "",
+        phone: "",
+        address: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeCompanyInfo = await client.companyInfo.create({
+      data: {
+        location: "",
+        department: "",
+        position: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeExperience = await client.experience.create({
+      data: {
+        industry: [],
+        network: [],
+        clients: [],
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeIntrests = await client.intrests.create({
+      data: {
+        hobbies: "",
+        special_skills: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const createdEmployee = await client.employee.findUnique({
+      where: { id: newEmployee.id },
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
+      },
+    });
+
+    res.status(200).json(createdEmployee);
   } catch (err) {
     next(err);
   }
@@ -92,9 +137,9 @@ exports.updateEmployee = async (req, res, next) => {
         skill: true,
         wish: true,
         education: true,
-        // intrests: { hobbies, special_skills },
-        // company_info: { location, department, position },
-        // ContactInfo: { email, phone, address },
+        intrests: { hobbies, special_skills },
+        company_info: { location, department, position },
+        ContactInfo: { email, phone, address },
       },
     });
     res.status(200).json(updatedEmployee);

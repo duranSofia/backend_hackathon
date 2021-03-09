@@ -11,17 +11,17 @@ generator client {
 }
 
 model Employee {
-  id           Int           @id @default(autoincrement())
-  name         String
-  last_name    String
-  picture      String?
-  experience   Experience?
-  skill        Skill[]
-  wish         Wish?
-  education    Education[]
-  intrests     Intrests?
-  company_info Company_info?
-  ContactInfo  ContactInfo[]
+  id          Int          @id @default(autoincrement())
+  name        String
+  last_name   String
+  picture     String?
+  experience  Experience?
+  skill       Skill[]
+  wish        Wish?
+  education   Education[]
+  intrests    Intrests?
+  companyInfo CompanyInfo?
+  contactInfo ContactInfo?
 }
 
 model ContactInfo {
@@ -95,7 +95,7 @@ model Intrests {
   employeeId     Int
 }
 
-model Company_info {
+model CompanyInfo {
   id         Int      @id @default(autoincrement())
   location   String
   department String

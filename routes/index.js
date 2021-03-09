@@ -7,13 +7,13 @@ const skillTypeRoutes = require("./skill/skilltypes.routes");
 const experienceRoutes = require("./experience.routes");
 // const intrestsRoutes = require("./intersts.routes");
 // const companyInfoRoutes = require("./companyInfo.routes");
-// const employeeRoutes = require("./employee.routes");
+const employeeRoutes = require("./employee.routes");
 
 router.get("/", (req, res, next) => {
   res.json({ ok: "index :)" });
 });
 
-// router.use("/employee", employeeRoutes);
+router.use("/employee", employeeRoutes);
 router.use("/skill", skillRoutes);
 router.use("/skilltype", skillTypeRoutes);
 router.use("/experience", experienceRoutes);
