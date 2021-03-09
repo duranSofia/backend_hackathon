@@ -31,7 +31,7 @@ exports.getOneEmployee = async (req, res, next) => {
         skill: true,
         wish: true,
         education: true,
-        other: true,
+        intrests: true,
         company_info: true,
         ContactInfo: true,
       },
@@ -47,21 +47,63 @@ exports.getOneEmployee = async (req, res, next) => {
 
 exports.createEmployee = async (req, res, next) => {
   try {
-    const { name, last_name, picture } = req.body;
+    const { name, last_name } = req.body;
     const newEmployee = await client.employee.create({
       data: {
         name,
         last_name,
-        // email,
-        // phone,
-        // address,
-        picture,
       },
-      include: {
-        company_info: true,
+      // select: { company_info: { location: "", department: "", position: "" } },
+      // select: { contactInfo: { email: "", phone: "", address: "" } },
+      // select: { education: { degree: "" } },
+      //select: { experience: { industry: "", network: "", clients: "" } },
+      //select: { wish: { project: "", further_education: "" } },
+    });
+    const newEmployeeContactInfo = await client.contactInfo.create({
+      data: {
+        email: "",
+        phone: "",
+        address: "",
+        employee: { connect: { id: newEmployee.id } },
       },
     });
-    res.status(200).json(newEmployee);
+    const newEmployeeCompanyInfo = await client.companyInfo.create({
+      data: {
+        location: "",
+        department: "",
+        position: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeExperience = await client.experience.create({
+      data: {
+        industry: [],
+        network: [],
+        clients: [],
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeIntrests = await client.intrests.create({
+      data: {
+        hobbies: "",
+        special_skills: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const createdEmployee = await client.employee.findUnique({
+      where: { id: newEmployee.id },
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
+      },
+    });
+
+    res.status(200).json(createdEmployee);
   } catch (err) {
     next(err);
   }
@@ -235,7 +277,9 @@ exports.createNewEmployeeOther = async (req, res, next) => {
   }
 };
 
-exports.addEmployeeOtherById = async (req, res, next) => {
+//updated addEmployeeIntrests
+
+exports.addEmployeeIntrests = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     const employee = await findEmployee(employeeId);
@@ -243,40 +287,14 @@ exports.addEmployeeOtherById = async (req, res, next) => {
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
-    const otherId = req.body.otherId;
-    const intrests = await findOther(otherId);
-    if (!intrests) {
-      throw createError(404, "Other not Found");
-    }
+    const { hobbies, special_skills } = req.body;
+
     const updatedEmployee = await client.employee.update({
       where: { id: employeeId },
-      data: { intrests: { connect: { id: otherId } } },
+      data: { intrests: { hobbies, special_skills } },
       include: { intrests: true },
     });
     res.status(200).json(updatedEmployee);
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.removeOtherById = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const otherId = Number(req.params.otherId);
-    const employee = await findEmployee(employeeId);
-    const intrests = await findOther(otherId);
-    if (!employee) {
-      throw createError(404, "Employee not Found");
-    }
-    if (!intrests) {
-      throw createError(404, "Other not Found");
-    }
-    const removedOther = await client.employee.update({
-      where: { id: employeeId },
-      data: { intrests: { disconnect: { id: otherId } } },
-      include: { intrests: true },
-    });
-    res.status(200).json(removedOther);
   } catch (err) {
     next(err);
   }
