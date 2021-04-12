@@ -11,74 +11,95 @@ generator client {
 }
 
 model Employee {
-  id         Int          @id @default(autoincrement())
-  name       String
-  last_name  String
+  id          Int          @id @default(autoincrement())
+  name        String
+  last_name   String
+  picture     String?
+  experience  Experience?
+  skill       Skill[]
+  wish        Wish?
+  education   Education[]
+  intrests    Intrests
+  companyInfo CompanyInfo?
+  contactInfo ContactInfo?
+}
+
+model ContactInfo {
+  id         Int      @id @default(autoincrement())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
   email      String
   phone      String
-  start_date DateTime
-  experience Experience[]
-  skill      Skill[]
-  wish       Wish[]
-  education  Education[]
-  hobby      Hobby[]
-  Office     Office?      @relation(fields: [officeId], references: [id])
-  officeId   Int?
-  Position   Position?    @relation(fields: [positionId], references: [id])
-  positionId Int?
+  address    String
 }
 
 model Experience {
-  id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
-  employee Employee[]
+  id         Int        @id @default(autoincrement())
+  employee   Employee   @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  industry   Industry[]
+  network    Industry[] @relation("network")
+  clients    Clients[]
+}
+
+model Clients {
+  id         Int          @id @default(autoincrement())
+  name       String
+  experience Experience[]
+  wish       Wish[]
+}
+
+model Industry {
+  id         Int          @id @default(autoincrement())
+  name       String
+  experience Experience[]
+  wish       Wish[]
+  network    Experience[] @relation("network")
 }
 
 model Skill {
-  id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
-  employee Employee[]
+  id          Int        @id @default(autoincrement())
+  name        String
+  employee    Employee[]
+  SkillType   SkillType? @relation(fields: [skillTypeId], references: [id])
+  skillTypeId Int?
+}
+
+model SkillType {
+  id    Int     @id @default(autoincrement())
+  type  String
+  skill Skill[]
 }
 
 model Wish {
-  id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
-  employee Employee[]
+  id                Int        @id @default(autoincrement())
+  project           String
+  industry          Industry[]
+  clients           Clients[]
+  further_education String?
+  employee          Employee   @relation(fields: [employeeId], references: [id])
+  employeeId        Int
 }
 
 model Education {
   id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
+  degree   String
   employee Employee[]
 }
 
-model Hobby {
-  id       Int        @id @default(autoincrement())
-  name     String
-  type     Int
-  employee Employee[]
+model Intrests {
+  id             Int      @id @default(autoincrement())
+  hobbies        String?
+  special_skills String?
+  employee       Employee @relation(fields: [employeeId], references: [id])
+  employeeId     Int
 }
 
-model Office {
-  id       Int        @id @default(autoincrement())
-  location String
-  employee Employee[]
-}
-
-model Position {
-  id           Int         @id @default(autoincrement())
-  name         String
-  employee     Employee[]
-  Department   Department? @relation(fields: [departmentId], references: [id])
-  departmentId Int?
-}
-
-model Department {
-  id       Int        @id @default(autoincrement())
-  name     String
-  position Position[]
+model CompanyInfo {
+  id         Int      @id @default(autoincrement())
+  location   String
+  department String
+  position   String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
 }

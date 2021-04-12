@@ -26,11 +26,12 @@ exports.getOneExperience = async (req, res, next) => {
 
 exports.createExperience = async (req, res, next) => {
   try {
-    const { name, type } = req.body;
+    const { clients, industry, network } = req.body;
     const newExperience = await client.experience.create({
       data: {
-        name: name,
-        type: type,
+        clients,
+        industry,
+        network,
       },
     });
     res.status(200).json(newExperience);
@@ -42,12 +43,13 @@ exports.createExperience = async (req, res, next) => {
 exports.updateExperience = async (req, res, next) => {
   try {
     const experienceId = Number(req.params.experienceId);
-    const { name, type } = req.body;
+    const { clients, industry, network } = req.body;
     const updatedExperience = await client.experience.update({
       where: { id: experienceId },
       data: {
-        name: name,
-        type: type,
+        clients,
+        industry,
+        network,
       },
       include: { employee: true },
     });

@@ -1,26 +1,25 @@
 const router = require("express").Router();
-const skillRoutes = require("./skill.routes");
-const educationRoutes = require("./education.routes");
-const wishRoutes = require("./wish.routes");
-const positionRoutes = require("./position.routes");
-const departmentRoutes = require("./department.routes");
+
+const skillRoutes = require("./skill/skill.routes");
+const skillTypeRoutes = require("./skill/skilltypes.routes");
+// const educationRoutes = require("./education.routes");
+// const wishRoutes = require("./wish.routes");
 const experienceRoutes = require("./experience.routes");
-const hobbyRoutes = require("./hobby.routes");
-const officeRoutes = require("./office.routes");
+// const intrestsRoutes = require("./intersts.routes");
+// const companyInfoRoutes = require("./companyInfo.routes");
 const employeeRoutes = require("./employee.routes");
 
 router.get("/", (req, res, next) => {
   res.json({ ok: "index :)" });
 });
 
-router.use("/api/employee", employeeRoutes); // manage employees
-router.use("/api/skill", skillRoutes); // manage skills
-router.use("/api/experience", experienceRoutes); // manage experiences
-router.use("/api/education", educationRoutes);
-router.use("/api/wish", wishRoutes);
-router.use("/api/position", positionRoutes);
-router.use("/api/department", departmentRoutes);
-router.use("/api/hobby", hobbyRoutes);
-router.use("/api/office", officeRoutes);
+router.use("/employee", employeeRoutes);
+router.use("/skill", skillRoutes);
+router.use("/skilltype", skillTypeRoutes);
+router.use("/experience", experienceRoutes);
+// router.use("/education", educationRoutes);
+// router.use("/wish", wishRoutes);
+// router.use("/intrests", intrestsRoutes);
+// router.use("/companyinfo", companyInfoRoutes);
 
 module.exports = router;

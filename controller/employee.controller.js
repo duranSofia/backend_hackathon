@@ -10,7 +10,9 @@ exports.getAllEmployees = async (req, res, next) => {
         skill: true,
         wish: true,
         education: true,
-        hobby: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
       },
     });
     res.status(200).json(employees);
@@ -29,7 +31,9 @@ exports.getOneEmployee = async (req, res, next) => {
         skill: true,
         wish: true,
         education: true,
-        hobby: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
       },
     });
     if (!employee) {
@@ -43,18 +47,63 @@ exports.getOneEmployee = async (req, res, next) => {
 
 exports.createEmployee = async (req, res, next) => {
   try {
-    const { name, last_name, email, phone, start_date } = req.body;
-    // const convertedDate = new Date(start_date).toISOString(); //TODO change it in the FrontEnd
+    const { name, last_name } = req.body;
     const newEmployee = await client.employee.create({
       data: {
-        name: name,
-        last_name: last_name,
-        email: email,
-        phone: phone,
-        start_date: start_date,
+        name,
+        last_name,
+      },
+      // select: { companyInfo: { location: "", department: "", position: "" } },
+      // select: { contactInfo: { email: "", phone: "", address: "" } },
+      // select: { education: { degree: "" } },
+      //select: { experience: { industry: "", network: "", clients: "" } },
+      //select: { wish: { project: "", further_education: "" } },
+    });
+    const newEmployeeContactInfo = await client.contactInfo.create({
+      data: {
+        email: "",
+        phone: "",
+        address: "",
+        employee: { connect: { id: newEmployee.id } },
       },
     });
-    res.status(200).json(newEmployee);
+    const newEmployeeCompanyInfo = await client.companyInfo.create({
+      data: {
+        location: "",
+        department: "",
+        position: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeExperience = await client.experience.create({
+      data: {
+        industry: [],
+        network: [],
+        clients: [],
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeIntrests = await client.intrests.create({
+      data: {
+        hobbies: "",
+        special_skills: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const createdEmployee = await client.employee.findUnique({
+      where: { id: newEmployee.id },
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
+      },
+    });
+
+    res.status(200).json(createdEmployee);
   } catch (err) {
     next(err);
   }
@@ -62,26 +111,104 @@ exports.createEmployee = async (req, res, next) => {
 
 exports.updateEmployee = async (req, res, next) => {
   try {
-    const employeeId = req.params.employeeId;
-    const { name, last_name, email, phone, start_date } = req.body;
+    const employeeId = Number(req.params.employeeId);
+    const { name, last_name, picture } = req.body;
     const updatedEmployee = await client.employee.update({
       where: { id: employeeId },
       data: {
-        name: name,
-        last_name: last_name,
-        email: email,
-        phone: phone,
-        start_date: start_date,
+        name,
+        last_name,
+        picture,
       },
       include: {
         experience: true,
         skill: true,
         wish: true,
         education: true,
-        hobby: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
       },
     });
     res.status(200).json(updatedEmployee);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// update INTRESTS to employee
+
+exports.updateEmployeeIntrests = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { hobbies, special_skills } = req.body;
+    console.log(special_skills, hobbies);
+    const employee = await findEmployee(employeeId);
+    if (!employee) {
+      throw createError(404, "Employee not Found");
+    }
+    const EmployeeIntrests = await client.employee.update({
+      where: { id: employeeId },
+      data: { intrests: { update: { hobbies, special_skills } } },
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
+      },
+    });
+    res.status(200).json(EmployeeIntrests);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// update CONTACT-INFO to employee
+exports.updateEmployeeContact = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { email, phone, address } = req.body;
+    const updatedEmployeeContact = await client.employee.update({
+      where: { id: employeeId },
+      data: { contactInfo: { update: { email, phone, address } } },
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
+      },
+    });
+    res.status(200).json(updatedEmployeeContact);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// update CONP-INFO to employee
+exports.updateEmployeeCompanyInfo = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { location, department, position } = req.body;
+    const updatedEmployeeCompanyInfo = await client.employee.update({
+      where: { id: employeeId },
+      data: { companyInfo: { update: { location, department, position } } },
+      include: {
+        experience: true,
+        skill: true,
+        wish: true,
+        education: true,
+        intrests: true,
+        companyInfo: true,
+        contactInfo: true,
+      },
+    });
+    res.status(200).json(updatedEmployeeCompanyInfo);
   } catch (err) {
     next(err);
   }
@@ -104,7 +231,6 @@ exports.deleteEmployee = async (req, res, next) => {
 const findEmployee = async (id) => {
   const employee = await client.employee.findUnique({
     where: { id },
-    include: { Office: true },
   });
   return employee;
 };
@@ -119,17 +245,20 @@ const findSkill = async (id) => {
 exports.createNewEmployeeSkill = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
-    const { name, type } = req.body;
+    const { software, languages, professional, softskill } = req.body;
     const employee = await findEmployee(employeeId);
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
     const createdSkill = await client.skill.create({
       data: {
-        name: name,
-        type: type,
+        software,
+        languages,
+        professional,
+        softskill,
         employee: { connect: { id: employeeId } },
       },
+      include: { employee: true },
     });
     res.status(200).json(createdSkill);
   } catch (err) {
@@ -187,80 +316,6 @@ exports.removeSkillById = async (req, res, next) => {
   }
 };
 
-// add HOBBY to employee
-const findHobby = async (id) => {
-  const hobby = await client.hobby.findUnique({ where: { id } });
-  return hobby;
-};
-
-exports.createNewEmployeeHobby = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const { name, type } = req.body;
-    const employee = await findEmployee(employeeId);
-    if (!employee) {
-      throw createError(404, "Employee not Found");
-    }
-    const createdHobby = await client.hobby.create({
-      data: {
-        name: name,
-        type: type,
-        employee: { connect: { id: employeeId } },
-      },
-    });
-    res.status(200).json(createdHobby);
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.addEmployeeHobbyById = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const employee = await findEmployee(employeeId);
-
-    if (!employee) {
-      throw createError(404, "Employee not Found");
-    }
-    const hobbyId = req.body.hobbyId;
-    const hobby = await findHobby(hobbyId);
-    if (!hobby) {
-      throw createError(404, "Hobby not Found");
-    }
-    const updatedEmployee = await client.employee.update({
-      where: { id: employeeId },
-      data: { hobby: { connect: { id: hobbyId } } },
-      include: { hobby: true },
-    });
-    res.status(200).json(updatedEmployee);
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.removeHobbyById = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const hobbyId = Number(req.params.hobbyId);
-    const employee = await findEmployee(employeeId);
-    const hobby = await findHobby(hobbyId);
-    if (!employee) {
-      throw createError(404, "Employee not Found");
-    }
-    if (!hobby) {
-      throw createError(404, "Hobby not Found");
-    }
-    const removedHobby = await client.employee.update({
-      where: { id: employeeId },
-      data: { hobby: { disconnect: { id: hobbyId } } },
-      include: { hobby: true },
-    });
-    res.status(200).json(removedHobby);
-  } catch (err) {
-    next(err);
-  }
-};
-
 // add EXPERIENCE to employee
 const findExperience = async (id) => {
   const experience = await client.experience.findUnique({ where: { id } });
@@ -270,15 +325,16 @@ const findExperience = async (id) => {
 exports.createNewEmployeeExperience = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
-    const { name, type } = req.body;
+    const { clients, industry, network } = req.body;
     const employee = await findEmployee(employeeId);
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
     const createdExperience = await client.experience.create({
       data: {
-        name: name,
-        type: type,
+        clients,
+        industry,
+        network,
         employee: { connect: { id: employeeId } },
       },
     });
@@ -348,15 +404,14 @@ const findEducation = async (id) => {
 exports.createNewEmployeeEducation = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
-    const { name, type } = req.body;
+    const { degree } = req.body;
     const employee = await findEmployee(employeeId);
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
     const createdEducation = await client.education.create({
       data: {
-        name: name,
-        type: type,
+        degree,
         employee: { connect: { id: employeeId } },
       },
     });
@@ -416,50 +471,52 @@ exports.removeEducationById = async (req, res, next) => {
   }
 };
 
-//ADD POSITION TO EMPLOYEE
+//ADD COMPANY INFO TO EMPLOYEE
 
-const findPosition = async (id) => {
-  const position = await client.position.findUnique({ where: { id } });
-  return position;
+const findCompanyInfo = async (id) => {
+  const companyInfo = await client.companyInfo.findUnique({ where: { id } });
+  return companyInfo;
 };
 
-exports.createNewEmployeePosition = async (req, res, next) => {
+exports.createNewEmployeeCompanyInfo = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
-    const { name } = req.body;
+    const { location, department, position } = req.body;
     const employee = await findEmployee(employeeId);
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
-    const createdPosition = await client.position.create({
+    const createdCompanyInfo = await client.companyInfo.create({
       data: {
-        name: name,
+        location,
+        department,
+        position,
         employee: { connect: { id: employeeId } },
       },
     });
-    res.status(200).json(createdPosition);
+    res.status(200).json(createdCompanyInfo);
   } catch (err) {
     next(err);
   }
 };
-// POST connect an existing position to an employee
+// POST connect an existing pcompany information to an employee
 
-exports.addEmployeePositionById = async (req, res, next) => {
+exports.addEmployeeCompanyInfoById = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     const employee = await findEmployee(employeeId);
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
-    const positionId = req.body.positionId;
-    const position = await findPosition(positionId);
-    if (!position) {
-      throw createError(404, "Position not Found");
+    const companyInfoId = req.body.companyInfoId;
+    const companyInfo = await findCompanyInfo(companyInfoId);
+    if (!companyInfo) {
+      throw createError(404, "Company Information not Found");
     }
     const updatedEmployee = await client.employee.update({
       where: { id: employeeId },
-      data: { Position: { connect: { id: positionId } } },
-      include: { Position: true },
+      data: { companyInfo: { connect: { id: companyInfoId } } },
+      include: { companyInfo: true },
     });
     res.status(200).json(updatedEmployee);
   } catch (err) {
@@ -467,92 +524,23 @@ exports.addEmployeePositionById = async (req, res, next) => {
   }
 };
 
-exports.removePositionById = async (req, res, next) => {
+exports.removeCompanyInfoById = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
-    const positionId = Number(req.params.positionId);
+    const companyInfoId = Number(req.params.companyInfoId);
     const employee = await findEmployee(employeeId);
-    const position = await findPosition(positionId);
+    const companyInfo = await findCompanyInfo(companyInfoId);
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
-    if (!position) {
-      throw createError(404, "Position not Found");
+    if (!companyInfo) {
+      throw createError(404, "Company Information not Found");
     }
-    if (employee.positionId !== positionId) {
-      throw createError(404, `No position ${positionId} on this employee`);
-    }
-    const removedPosition = await client.employee.update({
+    const removedCompanyInfo = await client.employee.update({
       where: { id: employeeId },
-      data: { Position: { disconnect: true } },
+      data: { companyInfo: { disconnect: { id: companyInfoId } } },
     });
-    res.status(200).json(removedPosition);
-  } catch (err) {
-    next(err);
-  }
-};
-
-//ADD OFFICE TO EMPLOYEE
-
-const findOffice = async (id) => {
-  const office = await client.office.findUnique({ where: { id } });
-  return office;
-};
-
-//POST connect an existing office to an employee
-
-exports.addEmployeeOfficeById = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const employee = await findEmployee(employeeId);
-    if (!employee) {
-      throw createError(404, "Employee not Found");
-    }
-    const officeId = req.body.officeId;
-    const office = await findOffice(officeId);
-    if (!office) {
-      throw createError(404, "Office not Found");
-    }
-    const updatedEmployee = await client.employee.update({
-      where: { id: employeeId },
-      data: { Office: { connect: { id: officeId } } },
-      include: { Office: true },
-    });
-    res.status(200).json(updatedEmployee);
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.removeOfficeById = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const officeId = Number(req.params.officeId);
-    console.log(officeId);
-    const employee = await findEmployee(employeeId);
-    const office = await findOffice(officeId);
-    if (!employee) {
-      throw createError(404, "Employee not Found");
-    }
-    if (!office) {
-      throw createError(404, "Office not Found");
-    }
-    if (employee.officeId !== officeId) {
-      throw createError(404, `No office ${officeId} on this employee`);
-    }
-    // const user = await prisma.user.update({
-    //   where: { email: 'alice@prisma.io' },
-    //   data: {
-    //     posts: {
-    //       disconnect: [{ id: 44 }, { id: 46 }],
-    //     },
-    //   },
-    // })
-    const removedOffice = await client.employee.update({
-      where: { id: employeeId },
-      data: { Office: { disconnect: true } },
-    });
-    res.status(200).json(removedOffice);
+    res.status(200).json(removedCompanyInfo);
   } catch (err) {
     next(err);
   }
@@ -565,18 +553,19 @@ const findWish = async (id) => {
   return wish;
 };
 
-exports.createWish = async (req, res, next) => {
+exports.createNewEmployeeWish = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
-    const { name, type } = req.body;
+    const { project, industry, further_education } = req.body;
     const employee = await findEmployee(employeeId);
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
     const createdWish = await client.wish.create({
       data: {
-        name: name,
-        type: type,
+        project,
+        industry,
+        further_education,
         employee: { connect: { id: employeeId } },
       },
     });
@@ -586,7 +575,7 @@ exports.createWish = async (req, res, next) => {
   }
 };
 
-exports.updateWish = async (req, res, next) => {
+exports.addEmployeeWishById = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     const employee = await findEmployee(employeeId);
@@ -610,7 +599,7 @@ exports.updateWish = async (req, res, next) => {
   }
 };
 
-exports.removeWish = async (req, res, next) => {
+exports.removeWishById = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     const wishId = Number(req.params.wishId);
