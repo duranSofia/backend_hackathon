@@ -4,6 +4,7 @@ const {
   updateEmployee,
   deleteEmployee,
   getOneEmployee,
+  updateEmployeeIntrests,
   createNewEmployeeSkill,
   addEmployeeSkillById,
   removeSkillById,
@@ -29,7 +30,7 @@ const router = require("express").Router();
 router.get("/", getAllEmployees);
 router.get("/:employeeId", getOneEmployee);
 router.post("/", createEmployee);
-// router.put("/:employeeId", updateEmployee);
+router.put("/:employeeId", updateEmployee);
 // router.delete("/:employeeId", deleteEmployee);
 
 // employee SKILLS router
@@ -37,9 +38,9 @@ router.post("/", createEmployee);
 // router.put("/:employeeId/skill", addEmployeeSkillById);
 // router.delete("/:employeeId/skill/:skillId", removeSkillById);
 
-// employee OTHER router
+// employee INTRESTS router
 // router.post("/:employeeId/other/create", createNewEmployeeOther);
-// router.put("/:employeeId/other", addEmployeeOtherById);
+router.put("/:employeeId/intrests", updateEmployeeIntrests);
 // router.delete("/:employeeId/other/:otherId", removeOtherById);
 
 // employee EXPERIENCE router
