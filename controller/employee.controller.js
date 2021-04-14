@@ -53,11 +53,15 @@ exports.createEmployee = async (req, res, next) => {
         name,
         last_name,
       },
-      // select: { companyInfo: { location: "", department: "", position: "" } },
-      // select: { contactInfo: { email: "", phone: "", address: "" } },
-      // select: { education: { degree: "" } },
-      //select: { experience: { industry: "", network: "", clients: "" } },
-      //select: { wish: { project: "", further_education: "" } },
+    });
+
+    const newEmployeeContact = await client.contactInfo.create({
+      data: {
+        email: "",
+        phone: "",
+        address: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
     });
 
     const newEmployeeCompanyInfo = await client.companyInfo.create({
@@ -174,6 +178,8 @@ exports.updateEmployeeContact = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     const { email, phone, address } = req.body;
+    //console.log(email, phone, address);
+
     const updatedEmployeeContact = await client.employee.update({
       where: { id: employeeId },
       data: { contactInfo: { update: { email, phone, address } } },

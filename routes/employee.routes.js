@@ -5,6 +5,7 @@ const {
   deleteEmployee,
   getOneEmployee,
   updateEmployeeIntrests,
+  updateEmployeeContact,
   createNewEmployeeSkill,
   addEmployeeSkillById,
   removeSkillById,
@@ -32,6 +33,9 @@ router.get("/:employeeId", getOneEmployee);
 router.post("/", createEmployee);
 router.put("/:employeeId", updateEmployee);
 // router.delete("/:employeeId", deleteEmployee);
+
+//employee contactInfo
+router.put("/:employeeId/contact", updateEmployeeContact);
 
 // employee SKILLS router
 // router.post("/:employeeId/skill/create", createNewEmployeeSkill);
