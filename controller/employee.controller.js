@@ -59,14 +59,7 @@ exports.createEmployee = async (req, res, next) => {
       //select: { experience: { industry: "", network: "", clients: "" } },
       //select: { wish: { project: "", further_education: "" } },
     });
-    const newEmployeeContactInfo = await client.contactInfo.create({
-      data: {
-        email: "",
-        phone: "",
-        address: "",
-        employee: { connect: { id: newEmployee.id } },
-      },
-    });
+
     const newEmployeeCompanyInfo = await client.companyInfo.create({
       data: {
         location: "",
@@ -87,6 +80,16 @@ exports.createEmployee = async (req, res, next) => {
       data: {
         hobbies: "",
         special_skills: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeWishes = await client.wish.create({
+      data: {
+        project: "",
+        industry: [],
+        clients: [],
+        further_education: "",
+
         employee: { connect: { id: newEmployee.id } },
       },
     });
@@ -217,6 +220,7 @@ exports.updateEmployeeCompanyInfo = async (req, res, next) => {
 exports.deleteEmployee = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
+    //check if it deletes the data from other tables
     const deletedEmployee = await client.employee.delete({
       where: { id: employeeId },
     });

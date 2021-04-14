@@ -19,7 +19,7 @@ model Employee {
   skill       Skill[]
   wish        Wish?
   education   Education[]
-  intrests    Intrests
+  intrests    Intrests?
   companyInfo CompanyInfo?
   contactInfo ContactInfo?
 }
