@@ -33,3 +33,35 @@ exports.AddClient = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.connectClientExperience = async (req, res, next) => {
+  try {
+    const experienceId = Number(req.params.experienceId);
+    const { clientId } = req.body;
+    const experienceUpdate = await client.experience.update({
+      where: { id: experienceId },
+      data: {
+        clients: { connect: { id: clientId } },
+      },
+    });
+    res.status(200).json(experienceUpdate);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.disconnectClientExperience = async (req, res, next) => {
+  try {
+    const experienceId = Number(req.params.experienceId);
+    const { clientId } = req.body;
+    const experienceUpdate = await client.experience.update({
+      where: { id: experienceId },
+      data: {
+        clients: { disconnect: { id: clientId } },
+      },
+    });
+    res.status(200).json(experienceUpdate);
+  } catch (err) {
+    next(err);
+  }
+};

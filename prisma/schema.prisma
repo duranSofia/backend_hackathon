@@ -25,9 +25,9 @@ model Employee {
 }
 
 model ContactInfo {
-  id         Int      @id @default(autoincrement())
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId Int
+  id         Int       @id @default(autoincrement())
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId Int?
   email      String
   phone      String
   address    String
@@ -35,8 +35,8 @@ model ContactInfo {
 
 model Experience {
   id         Int        @id @default(autoincrement())
-  employee   Employee   @relation(fields: [employeeId], references: [id])
-  employeeId Int
+  employee   Employee?  @relation(fields: [employeeId], references: [id])
+  employeeId Int?
   industry   Industry[]
   network    Industry[] @relation("network")
   clients    Clients[]
@@ -77,8 +77,8 @@ model Wish {
   industry          Industry[]
   clients           Clients[]
   further_education String?
-  employee          Employee   @relation(fields: [employeeId], references: [id])
-  employeeId        Int
+  employee          Employee?  @relation(fields: [employeeId], references: [id])
+  employeeId        Int?
 }
 
 model Education {
@@ -88,18 +88,18 @@ model Education {
 }
 
 model Intrests {
-  id             Int      @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   hobbies        String?
   special_skills String?
-  employee       Employee @relation(fields: [employeeId], references: [id])
-  employeeId     Int
+  employee       Employee? @relation(fields: [employeeId], references: [id])
+  employeeId     Int?
 }
 
 model CompanyInfo {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   location   String
   department String
   position   String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId Int
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId Int?
 }
