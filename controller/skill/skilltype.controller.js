@@ -28,11 +28,13 @@ exports.getOneSkillType = async (req, res, next) => {
 
 exports.createSkillType = async (req, res, next) => {
   try {
-    const { type, name } = req.body;
+    const { type } = req.body;
     const newSkillType = await client.skillType.create({
       data: {
         type,
-        name,
+      },
+      include: {
+        skill: true,
       },
     });
     res.status(200).json(newSkillType);
@@ -48,6 +50,39 @@ exports.deleteSkillType = async (req, res, next) => {
       where: { id: skillTypeId },
     });
     res.status(200).json(deletedSkillType);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.connectSkillTypeSkill = async (req, res, next) => {
+  try {
+    const skillId = Number(req.params.skillId);
+    const { skillTypeId } = req.body;
+    const skillUpdate = await client.skill.update({
+      where: { id: skillId },
+      data: {
+        SkillType: { connect: { id: skillTypeId } },
+      },
+    });
+    res.status(200).json(skillUpdate);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// this controller is not working!
+exports.disconnectSkillTypeSkill = async (req, res, next) => {
+  try {
+    const skillId = Number(req.params.skillId);
+    const { skillTypeId } = req.body;
+    const skillUpdate = await client.skill.update({
+      where: { id: skillId },
+      data: {
+        SkillType: { disconnect: { id: skillTypeId } },
+      },
+    });
+    res.status(200).json(skillUpdate);
   } catch (err) {
     next(err);
   }

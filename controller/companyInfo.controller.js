@@ -2,7 +2,7 @@ const client = require("../config/db");
 
 exports.getAllCompanyInfo = async (req, res, next) => {
   try {
-    const allCompanyInfo = await client.company_info.findMany({
+    const allCompanyInfo = await client.companyInfo.findMany({
       include: { employee: true },
     });
     res.status(200).json(allCompanyInfo);
@@ -14,7 +14,7 @@ exports.getAllCompanyInfo = async (req, res, next) => {
 exports.getOneCompanyInfo = async (req, res, next) => {
   try {
     const companyInfoId = Number(req.params.companyInfoId);
-    const uniqueCompanyInfoId = await client.company_info.findUnique({
+    const uniqueCompanyInfoId = await client.companyInfo.findUnique({
       where: { id: companyInfoId },
       include: { employee: true },
     });
@@ -27,7 +27,7 @@ exports.getOneCompanyInfo = async (req, res, next) => {
 exports.createCompanyInfo = async (req, res, next) => {
   try {
     const { location, department, position } = req.body;
-    const newcompanyInfo = await client.company_info.create({
+    const newcompanyInfo = await client.companyInfo.create({
       data: {
         location,
         department,
@@ -44,7 +44,7 @@ exports.updateCompanyInfo = async (req, res, next) => {
   try {
     const companyInfoId = Number(req.params.companyInfoId);
     const { location, department, position } = req.body;
-    const updatedCompanyInfoId = await client.company_info.update({
+    const updatedCompanyInfoId = await client.companyInfo.update({
       where: { id: companyInfoId },
       data: {
         location,
@@ -62,10 +62,45 @@ exports.updateCompanyInfo = async (req, res, next) => {
 exports.deleteCompanyInfo = async (req, res, next) => {
   try {
     const companyInfoId = Number(req.params.companyInfoId);
-    const deletedCompanyInfo = await client.company_info.delete({
+    const deletedCompanyInfo = await client.companyInfo.delete({
       where: { id: companyInfoId },
     });
     res.status(200).json(deletedCompanyInfo);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.connectEmployee = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { companyInfoId } = req.body;
+    const companyInfoUpdate = await client.companyInfo.update({
+      where: { id: companyInfoId },
+      data: {
+        employee: { connect: { id: employeeId } },
+      },
+      include: { employee: true },
+    });
+    res.status(200).json(companyInfoUpdate);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//this controller is not working
+exports.disconnectEmployee = async (req, res, next) => {
+  try {
+    const employeeId = Number(req.params.employeeId);
+    const { companyInfoId } = req.body;
+    const companyInfoUpdate = await client.companyInfo.update({
+      where: { id: companyInfoId },
+      data: {
+        employee: { disconnect: { id: employeeId } },
+      },
+      include: { employee: true },
+    });
+    res.status(200).json(companyInfoUpdate);
   } catch (err) {
     next(err);
   }
