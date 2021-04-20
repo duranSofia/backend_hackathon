@@ -3,7 +3,9 @@ const client = require("../config/db");
 // will be used for a dropdown
 exports.getAllClients = async (req, res, next) => {
   try {
-    const allClients = await client.clients.findMany();
+    const allClients = await client.clients.findMany({
+      include: { experience: true, wish: true },
+    });
     res.status(200).json(allClients);
   } catch (err) {
     next(err);
@@ -15,6 +17,7 @@ exports.GetOneClient = async (req, res, next) => {
     const clientId = Number(req.params.clientId);
     const oneClient = await client.clients.findUnique({
       where: { id: clientId },
+      include: { experience: true, wish: true },
     });
     res.status(200).json(oneClient);
   } catch (err) {
