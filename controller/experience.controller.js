@@ -3,7 +3,7 @@ const client = require("../config/db");
 exports.getAllExperiences = async (req, res, next) => {
   try {
     const allExperiences = await client.experience.findMany({
-      include: { employee: true },
+      include: { employee: true, industry: true, network: true, clients: true },
     });
     res.status(200).json(allExperiences);
   } catch (err) {
@@ -16,7 +16,7 @@ exports.getOneExperience = async (req, res, next) => {
     const experienceId = Number(req.params.experienceId);
     const uniqueExperience = await client.experience.findUnique({
       where: { id: experienceId },
-      include: { employee: true },
+      include: { employee: true, industry: true, network: true, clients: true },
     });
     res.status(200).json(uniqueExperience);
   } catch (err) {

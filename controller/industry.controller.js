@@ -33,3 +33,35 @@ exports.AddIndustry = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.connectIndustryExperience = async (req, res, next) => {
+  try {
+    const experienceId = Number(req.params.experienceId);
+    const { industryId } = req.body;
+    const experienceUpdate = await client.experience.update({
+      where: { id: experienceId },
+      data: {
+        industry: { connect: { id: industryId } },
+      },
+    });
+    res.status(200).json(experienceUpdate);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.disconnectIndustryExperience = async (req, res, next) => {
+  try {
+    const experienceId = Number(req.params.experienceId);
+    const { industryId } = req.body;
+    const experienceUpdate = await client.experience.update({
+      where: { id: experienceId },
+      data: {
+        industry: { disconnect: { id: industryId } },
+      },
+    });
+    res.status(200).json(experienceUpdate);
+  } catch (err) {
+    next(err);
+  }
+};
