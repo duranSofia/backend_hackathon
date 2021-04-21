@@ -26,16 +26,18 @@ const {
   removeWishById,
 } = require("../controller/employee.controller");
 
+const { employeeValidator } = require("../middleware/validation-middleware");
+
 const router = require("express").Router();
 
 router.get("/", getAllEmployees);
-router.get("/:employeeId", getOneEmployee);
+router.get("/:employeeId", employeeValidator, getOneEmployee);
 router.post("/", createEmployee);
-router.put("/:employeeId", updateEmployee);
-// router.delete("/:employeeId", deleteEmployee);
+router.put("/:employeeId", employeeValidator, updateEmployee);
+router.delete("/:employeeId", employeeValidator, deleteEmployee);
 
 //employee contactInfo
-router.put("/:employeeId/contact", updateEmployeeContact);
+//router.put("/:employeeId/contact", updateEmployeeContact);
 
 // employee SKILLS router
 // router.post("/:employeeId/skill/create", createNewEmployeeSkill);
@@ -44,7 +46,7 @@ router.put("/:employeeId/contact", updateEmployeeContact);
 
 // employee INTRESTS router
 // router.post("/:employeeId/other/create", createNewEmployeeOther);
-router.put("/:employeeId/intrests", updateEmployeeIntrests);
+// router.put("/:employeeId/intrests", updateEmployeeIntrests);
 // router.delete("/:employeeId/other/:otherId", removeOtherById);
 
 // employee EXPERIENCE router
