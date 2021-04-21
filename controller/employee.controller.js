@@ -119,105 +119,92 @@ exports.createEmployee = async (req, res, next) => {
 exports.updateEmployee = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
-    const { name, last_name, picture } = req.body;
-    const updatedEmployee = await client.employee.update({
-      where: { id: employeeId },
-      data: {
-        name,
-        last_name,
-        picture,
-      },
-      include: {
-        experience: true,
-        skill: true,
-        wish: true,
-        education: true,
-        intrests: true,
-        companyInfo: true,
-        contactInfo: true,
-      },
-    });
-    res.status(200).json(updatedEmployee);
-  } catch (err) {
-    next(err);
-  }
-};
+    const {
+      name,
+      last_name,
+      picture,
+      hobbies,
+      special_skills,
+      email,
+      phone,
+      address,
+      location,
+      department,
+      position,
+    } = req.body;
 
-// update INTRESTS to employee
+    // personal info update
+    if (name || last_name || picture) {
+      const updatedEmployee = await client.employee.update({
+        where: { id: employeeId },
+        data: {
+          name,
+          last_name,
+          picture,
+        },
+        include: {
+          experience: true,
+          skill: true,
+          wish: true,
+          education: true,
+          intrests: true,
+          companyInfo: true,
+          contactInfo: true,
+        },
+      });
+      res.status(200).json(updatedEmployee);
 
-exports.updateEmployeeIntrests = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const { hobbies, special_skills } = req.body;
-    console.log(special_skills, hobbies);
-    const employee = await findEmployee(employeeId);
-    if (!employee) {
-      throw createError(404, "Employee not Found");
+      //intrests update
+    } else if (hobbies || special_skills) {
+      const updatedEmployee = await client.employee.update({
+        where: { id: employeeId },
+        data: { intrests: { update: { hobbies, special_skills } } },
+        include: {
+          experience: true,
+          skill: true,
+          wish: true,
+          education: true,
+          intrests: true,
+          companyInfo: true,
+          contactInfo: true,
+        },
+      });
+      res.status(200).json(updatedEmployee);
+
+      //contact info update
+    } else if (email || phone || address) {
+      const updatedEmployeeContact = await client.employee.update({
+        where: { id: employeeId },
+        data: { contactInfo: { update: { email, phone, address } } },
+        include: {
+          experience: true,
+          skill: true,
+          wish: true,
+          education: true,
+          intrests: true,
+          companyInfo: true,
+          contactInfo: true,
+        },
+      });
+      res.status(200).json(updatedEmployeeContact);
+
+      //conpmney info update
+    } else if (location || department || position) {
+      const updatedEmployeeCompanyInfo = await client.employee.update({
+        where: { id: employeeId },
+        data: { companyInfo: { update: { location, department, position } } },
+        include: {
+          experience: true,
+          skill: true,
+          wish: true,
+          education: true,
+          intrests: true,
+          companyInfo: true,
+          contactInfo: true,
+        },
+      });
+      res.status(200).json(updatedEmployeeCompanyInfo);
     }
-    const EmployeeIntrests = await client.employee.update({
-      where: { id: employeeId },
-      data: { intrests: { update: { hobbies, special_skills } } },
-      include: {
-        experience: true,
-        skill: true,
-        wish: true,
-        education: true,
-        intrests: true,
-        companyInfo: true,
-        contactInfo: true,
-      },
-    });
-    res.status(200).json(EmployeeIntrests);
-  } catch (err) {
-    next(err);
-  }
-};
-
-// update CONTACT-INFO to employee
-exports.updateEmployeeContact = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const { email, phone, address } = req.body;
-    //console.log(email, phone, address);
-
-    const updatedEmployeeContact = await client.employee.update({
-      where: { id: employeeId },
-      data: { contactInfo: { update: { email, phone, address } } },
-      include: {
-        experience: true,
-        skill: true,
-        wish: true,
-        education: true,
-        intrests: true,
-        companyInfo: true,
-        contactInfo: true,
-      },
-    });
-    res.status(200).json(updatedEmployeeContact);
-  } catch (err) {
-    next(err);
-  }
-};
-
-// update CONP-INFO to employee
-exports.updateEmployeeCompanyInfo = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const { location, department, position } = req.body;
-    const updatedEmployeeCompanyInfo = await client.employee.update({
-      where: { id: employeeId },
-      data: { companyInfo: { update: { location, department, position } } },
-      include: {
-        experience: true,
-        skill: true,
-        wish: true,
-        education: true,
-        intrests: true,
-        companyInfo: true,
-        contactInfo: true,
-      },
-    });
-    res.status(200).json(updatedEmployeeCompanyInfo);
   } catch (err) {
     next(err);
   }
@@ -227,6 +214,21 @@ exports.deleteEmployee = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
     //check if it deletes the data from other tables
+    const deletedCompaneyInfo = await client.companyInfo.delete({
+      where: { employeeId },
+    });
+    const deletedContactInfo = await client.contactInfo.delete({
+      where: { employeeId },
+    });
+    const deletedIntrests = await client.intrests.delete({
+      where: { employeeId },
+    });
+    const deletedWishes = await client.wish.delete({
+      where: { employeeId },
+    });
+    const deletedExperience = await client.experience.delete({
+      where: { employeeId },
+    });
     const deletedEmployee = await client.employee.delete({
       where: { id: employeeId },
     });
