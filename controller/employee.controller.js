@@ -11,8 +11,8 @@ exports.getAllEmployees = async (req, res, next) => {
         wish: true,
         education: true,
         intrests: true,
-        company_info: true,
-        ContactInfo: true,
+        companyInfo: true,
+        contactInfo: true,
       },
     });
     res.status(200).json(employees);
@@ -32,8 +32,8 @@ exports.getOneEmployee = async (req, res, next) => {
         wish: true,
         education: true,
         intrests: true,
-        company_info: true,
-        ContactInfo: true,
+        companyInfo: true,
+        contactInfo: true,
       },
     });
     if (!employee) {
@@ -53,13 +53,9 @@ exports.createEmployee = async (req, res, next) => {
         name,
         last_name,
       },
-      // select: { company_info: { location: "", department: "", position: "" } },
-      // select: { contactInfo: { email: "", phone: "", address: "" } },
-      // select: { education: { degree: "" } },
-      //select: { experience: { industry: "", network: "", clients: "" } },
-      //select: { wish: { project: "", further_education: "" } },
     });
-    const newEmployeeContactInfo = await client.contactInfo.create({
+
+    const newEmployeeContact = await client.contactInfo.create({
       data: {
         email: "",
         phone: "",
@@ -67,6 +63,7 @@ exports.createEmployee = async (req, res, next) => {
         employee: { connect: { id: newEmployee.id } },
       },
     });
+
     const newEmployeeCompanyInfo = await client.companyInfo.create({
       data: {
         location: "",
@@ -87,6 +84,16 @@ exports.createEmployee = async (req, res, next) => {
       data: {
         hobbies: "",
         special_skills: "",
+        employee: { connect: { id: newEmployee.id } },
+      },
+    });
+    const newEmployeeWishes = await client.wish.create({
+      data: {
+        project: "",
+        industry: [],
+        clients: [],
+        further_education: "",
+
         employee: { connect: { id: newEmployee.id } },
       },
     });
@@ -115,34 +122,89 @@ exports.updateEmployee = async (req, res, next) => {
     const {
       name,
       last_name,
+      picture,
+      hobbies,
+      special_skills,
       email,
       phone,
       address,
-      picture,
       location,
       department,
       position,
-      hobbies,
-      special_skills,
     } = req.body;
-    const updatedEmployee = await client.employee.update({
-      where: { id: employeeId },
-      data: {
-        name,
-        last_name,
-        picture,
-      },
-      include: {
-        experience: true,
-        skill: true,
-        wish: true,
-        education: true,
-        intrests: { hobbies, special_skills },
-        company_info: { location, department, position },
-        ContactInfo: { email, phone, address },
-      },
-    });
-    res.status(200).json(updatedEmployee);
+
+    // personal info update
+    if (name || last_name || picture) {
+      const updatedEmployee = await client.employee.update({
+        where: { id: employeeId },
+        data: {
+          name,
+          last_name,
+          picture,
+        },
+        include: {
+          experience: true,
+          skill: true,
+          wish: true,
+          education: true,
+          intrests: true,
+          companyInfo: true,
+          contactInfo: true,
+        },
+      });
+      res.status(200).json(updatedEmployee);
+
+      //intrests update
+    } else if (hobbies || special_skills) {
+      const updatedEmployee = await client.employee.update({
+        where: { id: employeeId },
+        data: { intrests: { update: { hobbies, special_skills } } },
+        include: {
+          experience: true,
+          skill: true,
+          wish: true,
+          education: true,
+          intrests: true,
+          companyInfo: true,
+          contactInfo: true,
+        },
+      });
+      res.status(200).json(updatedEmployee);
+
+      //contact info update
+    } else if (email || phone || address) {
+      const updatedEmployeeContact = await client.employee.update({
+        where: { id: employeeId },
+        data: { contactInfo: { update: { email, phone, address } } },
+        include: {
+          experience: true,
+          skill: true,
+          wish: true,
+          education: true,
+          intrests: true,
+          companyInfo: true,
+          contactInfo: true,
+        },
+      });
+      res.status(200).json(updatedEmployeeContact);
+
+      //conpmney info update
+    } else if (location || department || position) {
+      const updatedEmployeeCompanyInfo = await client.employee.update({
+        where: { id: employeeId },
+        data: { companyInfo: { update: { location, department, position } } },
+        include: {
+          experience: true,
+          skill: true,
+          wish: true,
+          education: true,
+          intrests: true,
+          companyInfo: true,
+          contactInfo: true,
+        },
+      });
+      res.status(200).json(updatedEmployeeCompanyInfo);
+    }
   } catch (err) {
     next(err);
   }
@@ -151,6 +213,22 @@ exports.updateEmployee = async (req, res, next) => {
 exports.deleteEmployee = async (req, res, next) => {
   try {
     const employeeId = Number(req.params.employeeId);
+    //check if it deletes the data from other tables
+    const deletedCompaneyInfo = await client.companyInfo.delete({
+      where: { employeeId },
+    });
+    const deletedContactInfo = await client.contactInfo.delete({
+      where: { employeeId },
+    });
+    const deletedIntrests = await client.intrests.delete({
+      where: { employeeId },
+    });
+    const deletedWishes = await client.wish.delete({
+      where: { employeeId },
+    });
+    const deletedExperience = await client.experience.delete({
+      where: { employeeId },
+    });
     const deletedEmployee = await client.employee.delete({
       where: { id: employeeId },
     });
@@ -245,56 +323,6 @@ exports.removeSkillById = async (req, res, next) => {
       include: { skill: true },
     });
     res.status(200).json(removedSkill);
-  } catch (err) {
-    next(err);
-  }
-};
-
-// add Other to employee
-const findOther = async (id) => {
-  const intrests = await client.intrests.findUnique({ where: { id } });
-  return intrests;
-};
-
-exports.createNewEmployeeOther = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const { hobbies, special_skills } = req.body;
-    const employee = await findEmployee(employeeId);
-    if (!employee) {
-      throw createError(404, "Employee not Found");
-    }
-    const createdOther = await client.intrests.create({
-      data: {
-        hobbies,
-        special_skills,
-        employee: { connect: { id: employeeId } },
-      },
-    });
-    res.status(200).json(createdOther);
-  } catch (err) {
-    next(err);
-  }
-};
-
-//updated addEmployeeIntrests
-
-exports.addEmployeeIntrests = async (req, res, next) => {
-  try {
-    const employeeId = Number(req.params.employeeId);
-    const employee = await findEmployee(employeeId);
-
-    if (!employee) {
-      throw createError(404, "Employee not Found");
-    }
-    const { hobbies, special_skills } = req.body;
-
-    const updatedEmployee = await client.employee.update({
-      where: { id: employeeId },
-      data: { intrests: { hobbies, special_skills } },
-      include: { intrests: true },
-    });
-    res.status(200).json(updatedEmployee);
   } catch (err) {
     next(err);
   }
@@ -458,7 +486,7 @@ exports.removeEducationById = async (req, res, next) => {
 //ADD COMPANY INFO TO EMPLOYEE
 
 const findCompanyInfo = async (id) => {
-  const companyInfo = await client.company_info.findUnique({ where: { id } });
+  const companyInfo = await client.companyInfo.findUnique({ where: { id } });
   return companyInfo;
 };
 
@@ -470,7 +498,7 @@ exports.createNewEmployeeCompanyInfo = async (req, res, next) => {
     if (!employee) {
       throw createError(404, "Employee not Found");
     }
-    const createdCompanyInfo = await client.company_info.create({
+    const createdCompanyInfo = await client.companyInfo.create({
       data: {
         location,
         department,
@@ -499,8 +527,8 @@ exports.addEmployeeCompanyInfoById = async (req, res, next) => {
     }
     const updatedEmployee = await client.employee.update({
       where: { id: employeeId },
-      data: { company_info: { connect: { id: companyInfoId } } },
-      include: { company_info: true },
+      data: { companyInfo: { connect: { id: companyInfoId } } },
+      include: { companyInfo: true },
     });
     res.status(200).json(updatedEmployee);
   } catch (err) {
@@ -522,7 +550,7 @@ exports.removeCompanyInfoById = async (req, res, next) => {
     }
     const removedCompanyInfo = await client.employee.update({
       where: { id: employeeId },
-      data: { company_info: { disconnect: { id: companyInfoId } } },
+      data: { companyInfo: { disconnect: { id: companyInfoId } } },
     });
     res.status(200).json(removedCompanyInfo);
   } catch (err) {
